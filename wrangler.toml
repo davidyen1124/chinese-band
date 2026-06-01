@@ -1,0 +1,11 @@
+name = "chinese-band-jam"
+main = "src/worker.ts"
+compatibility_date = "2026-05-31"
+
+[vars]
+YARA_CHAT_URL = "https://yara.vishalsood.com/api/chat"
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
