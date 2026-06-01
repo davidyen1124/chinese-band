@@ -1,6 +1,8 @@
 # ChineseBand Jam
 
-![ChineseBand Jam portrait screenshot](docs/screenshot.png)
+<p align="center">
+  <img src="docs/screenshot.png" alt="ChineseBand Jam screenshot" width="360">
+</p>
 
 A one-button AI music toy that asks a model to arrange tiny guzheng and percussion samples, then bravely pretends this was the plan all along.
 
