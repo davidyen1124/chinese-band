@@ -11,9 +11,9 @@ body,
 }
 
 body {
-  font-family: ui-serif, Georgia, 'Times New Roman', serif;
-  background: #120907;
-  color: #fff7e0;
+  font-family: Georgia, 'Times New Roman', ui-serif, serif;
+  background: #050302;
+  color: #fff0c5;
   overflow: hidden;
 }
 
@@ -21,116 +21,358 @@ button {
   font: inherit;
 }
 
+button,
+input {
+  -webkit-tap-highlight-color: transparent;
+}
+
 .screen {
+  --gold: #f7c15b;
+  --gold-deep: #8f571f;
+  --red: #971d13;
+  --red-deep: #3c0907;
+  --ink: #070403;
+  --progress: 0%;
   position: relative;
   display: grid;
   min-height: 100dvh;
-  padding: 0;
+  overflow: hidden;
   background:
-    linear-gradient(180deg, rgb(0 0 0 / 0.04), rgb(0 0 0 / 0.34)),
-    url('/images/menubg.jpg') center / 100% 100% no-repeat;
+    radial-gradient(circle at 50% 66%, rgb(198 47 22 / 0.18), transparent 22rem),
+    linear-gradient(180deg, rgb(0 0 0 / 0.02), rgb(0 0 0 / 0.38)),
+    url('/images/chinese-band-stage-bg.png') center / cover no-repeat;
   isolation: isolate;
 }
 
 .screen::before {
   position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
+  inset: 0;
   z-index: -1;
-  height: clamp(96px, 25vw, 132px);
-  background: url('/images/menubar.png') top center / 100% 100% no-repeat;
+  background:
+    linear-gradient(90deg, rgb(0 0 0 / 0.52), transparent 20%, transparent 80%, rgb(0 0 0 / 0.56)),
+    radial-gradient(circle at 50% 54%, transparent 0 23rem, rgb(0 0 0 / 0.22) 45rem);
   content: '';
-  opacity: 0.95;
+  pointer-events: none;
 }
 
 .screen::after {
   position: absolute;
-  top: calc(clamp(96px, 25vw, 132px) - 2px);
-  right: 0;
-  left: 0;
-  z-index: -1;
-  height: 28px;
-  background: linear-gradient(180deg, rgb(19 8 5 / 0.34), rgb(19 8 5 / 0));
+  inset: auto 0 0;
+  height: 30dvh;
+  background: linear-gradient(180deg, transparent, rgb(12 3 1 / 0.58));
   content: '';
+  pointer-events: none;
 }
 
 .stage {
   display: grid;
-  align-content: center;
+  grid-template-rows: minmax(88px, 22dvh) auto 1fr;
   justify-items: center;
   width: 100vw;
   min-height: 100dvh;
   margin: 0 auto;
-  padding: clamp(132px, 30dvh, 220px) 0 clamp(28px, 8dvh, 72px);
+  padding: clamp(26px, 4dvh, 42px) clamp(18px, 4vw, 56px) clamp(28px, 7dvh, 74px);
 }
 
-@media (orientation: portrait) {
-  .screen {
-    background:
-      linear-gradient(180deg, rgb(0 0 0 / 0.02), rgb(0 0 0 / 0.28)),
-      url('/images/menubg.jpg') center / 100% 100% no-repeat;
-  }
+.title-plaque {
+  align-self: end;
+  width: min(68rem, 77vw);
+  min-height: clamp(74px, 10vw, 112px);
+  display: grid;
+  place-items: center;
+  padding: clamp(12px, 1.5vw, 18px) clamp(26px, 6vw, 76px);
+  border: 1px solid rgb(252 196 92 / 0.82);
+  border-radius: 4px;
+  background:
+    linear-gradient(90deg, transparent, rgb(255 206 105 / 0.12) 18%, rgb(255 229 164 / 0.08) 50%, rgb(255 206 105 / 0.12) 82%, transparent),
+    linear-gradient(180deg, rgb(38 23 13 / 0.95), rgb(9 7 5 / 0.94));
+  box-shadow:
+    inset 0 0 0 2px rgb(40 16 6 / 0.82),
+    inset 0 10px 26px rgb(255 211 125 / 0.08),
+    0 18px 42px rgb(0 0 0 / 0.42);
+}
 
-  .screen::before {
-    height: clamp(92px, 25vw, 118px);
-  }
+.title-plaque h1 {
+  margin: 0;
+  color: #ffd582;
+  font-size: clamp(2.1rem, 5.8vw, 5.55rem);
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 0.95;
+  text-align: center;
+  text-transform: uppercase;
+  text-shadow:
+    0 1px 0 #58300e,
+    0 3px 0 #130706,
+    0 0 24px rgb(255 161 63 / 0.22);
+}
 
-  .screen::after {
-    top: calc(clamp(92px, 25vw, 118px) - 2px);
-  }
-
-  .stage {
-    align-content: start;
-    padding-top: clamp(210px, 38dvh, 320px);
-  }
+.controls {
+  align-self: center;
+  display: grid;
+  justify-items: center;
+  gap: clamp(28px, 4.5dvh, 44px);
+  width: min(54rem, 82vw);
+  margin-top: clamp(54px, 10dvh, 112px);
+  filter: drop-shadow(0 26px 38px rgb(0 0 0 / 0.48));
 }
 
 .generate-button {
-  width: min(56vw, 240px);
-  min-height: 58px;
-  border: 1px solid rgb(255 227 155 / 0.62);
-  border-radius: 8px;
-  background: rgb(50 16 11 / 0.76);
-  color: #fff5cf;
-  font-size: clamp(1.22rem, 5vw, 1.38rem);
+  position: relative;
+  width: min(30rem, 72vw);
+  min-height: clamp(78px, 12vw, 126px);
+  padding: clamp(12px, 2vw, 18px) clamp(32px, 6vw, 62px);
+  border: 1px solid rgb(255 217 137 / 0.92);
+  border-radius: clamp(18px, 3vw, 30px);
+  background:
+    radial-gradient(circle at 50% 8%, rgb(255 228 169 / 0.38), transparent 16%),
+    linear-gradient(180deg, rgb(232 64 38 / 0.82), rgb(141 22 14 / 0.92) 48%, rgb(53 8 7 / 0.98)),
+    var(--red);
+  color: #ffe7a9;
+  font-size: clamp(2rem, 6.2vw, 4.25rem);
   font-weight: 700;
+  line-height: 1;
+  text-shadow:
+    0 2px 0 #4f170a,
+    0 0 18px rgb(255 197 97 / 0.45);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.2),
-    0 18px 40px rgb(0 0 0 / 0.36);
+    inset 0 0 0 4px rgb(82 8 6 / 0.88),
+    inset 0 0 0 8px rgb(253 185 81 / 0.22),
+    inset 0 16px 24px rgb(255 224 161 / 0.22),
+    inset 0 -16px 30px rgb(21 0 0 / 0.62),
+    0 0 0 3px rgb(69 22 8 / 0.95),
+    0 0 0 5px rgb(255 199 92 / 0.58),
+    0 20px 38px rgb(0 0 0 / 0.48),
+    0 0 34px rgb(192 49 20 / 0.22);
   cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
+  transition:
+    filter 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.generate-button::before,
+.generate-button::after {
+  position: absolute;
+  inset: 12px;
+  border: 1px solid rgb(255 202 101 / 0.36);
+  border-radius: calc(clamp(18px, 3vw, 30px) - 8px);
+  content: '';
+  pointer-events: none;
+}
+
+.generate-button::after {
+  inset: 9px 15px auto;
+  height: 2px;
+  border: 0;
+  background: linear-gradient(90deg, transparent, rgb(255 243 200 / 0.74), transparent);
+}
+
+.generate-button span {
+  position: relative;
+  display: block;
+}
+
+.generate-button:hover:not(:disabled) {
+  filter: brightness(1.08) saturate(1.05);
+  transform: translateY(-2px);
 }
 
 .generate-button:active {
-  transform: translateY(1px);
+  transform: translateY(2px) scale(0.992);
 }
 
 .generate-button:disabled {
   cursor: wait;
-  opacity: 0.72;
+  filter: saturate(0.78);
+  opacity: 0.78;
 }
 
-.progress {
-  width: min(56vw, 240px);
-  height: 10px;
-  margin-top: 18px;
-  overflow: hidden;
-  border: 1px solid rgb(255 232 170 / 0.42);
+.seekbar {
+  width: min(52rem, 82vw);
+  height: 34px;
+  margin: 0;
+  appearance: none;
+  border: 0;
   border-radius: 999px;
-  background: rgb(0 0 0 / 0.42);
+  background:
+    linear-gradient(90deg, transparent, rgb(255 208 111 / 0.18), transparent),
+    linear-gradient(90deg, #ff9f18 0 var(--progress), #080504 var(--progress) 100%);
+  box-shadow:
+    inset 0 0 0 2px rgb(11 5 2 / 0.96),
+    inset 0 0 0 4px rgb(202 126 44 / 0.58),
+    inset 0 8px 10px rgb(255 213 132 / 0.18),
+    inset 0 -8px 12px rgb(0 0 0 / 0.74),
+    0 0 0 1px rgb(255 209 111 / 0.6),
+    0 12px 24px rgb(0 0 0 / 0.48),
+    0 0 24px rgb(255 139 24 / 0.18);
+  cursor: pointer;
 }
 
-.progress > div {
-  width: 100%;
-  height: 100%;
-  transform-origin: left;
-  background: #ffd06a;
-  box-shadow: 0 0 18px rgb(255 208 106 / 0.72);
+.seekbar:disabled {
+  cursor: default;
+  filter: saturate(0.55) brightness(0.72);
+  opacity: 0.78;
+}
+
+.seekbar:focus-visible {
+  outline: 3px solid rgb(255 228 160 / 0.85);
+  outline-offset: 7px;
+}
+
+.seekbar::-webkit-slider-runnable-track {
+  height: 34px;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.seekbar::-webkit-slider-thumb {
+  width: 48px;
+  height: 48px;
+  margin-top: -7px;
+  appearance: none;
+  border: 1px solid rgb(255 234 170 / 0.94);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, #3a1607 0 13%, transparent 14%),
+    conic-gradient(from 22deg, #ffe39f, #b96d22, #ffd57e, #66300f, #f7bd5e, #ffe39f),
+    radial-gradient(circle at 35% 25%, #fff1bd, #d8892d 38%, #4a1708 76%);
+  box-shadow:
+    inset 0 0 0 5px rgb(72 23 7 / 0.62),
+    inset 0 0 11px rgb(255 249 201 / 0.52),
+    0 0 0 4px rgb(20 8 4 / 0.9),
+    0 0 0 6px rgb(232 152 56 / 0.62),
+    0 6px 16px rgb(0 0 0 / 0.54),
+    0 0 18px rgb(255 166 43 / 0.34);
+}
+
+.seekbar::-moz-range-track {
+  height: 34px;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.seekbar::-moz-range-progress {
+  height: 34px;
+  border-radius: 999px;
+  background: #ff9f18;
+}
+
+.seekbar::-moz-range-thumb {
+  width: 48px;
+  height: 48px;
+  border: 1px solid rgb(255 234 170 / 0.94);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, #3a1607 0 13%, transparent 14%),
+    conic-gradient(from 22deg, #ffe39f, #b96d22, #ffd57e, #66300f, #f7bd5e, #ffe39f),
+    radial-gradient(circle at 35% 25%, #fff1bd, #d8892d 38%, #4a1708 76%);
+  box-shadow:
+    inset 0 0 0 5px rgb(72 23 7 / 0.62),
+    inset 0 0 11px rgb(255 249 201 / 0.52),
+    0 0 0 4px rgb(20 8 4 / 0.9),
+    0 0 0 6px rgb(232 152 56 / 0.62),
+    0 6px 16px rgb(0 0 0 / 0.54);
+}
+
+@media (max-width: 760px) {
+  .screen {
+    background-position: 48% center;
+  }
+
+  .stage {
+    grid-template-rows: minmax(76px, 20dvh) auto 1fr;
+    padding-inline: 18px;
+  }
+
+  .title-plaque {
+    width: min(31rem, 92vw);
+    min-height: 68px;
+    padding-inline: 20px;
+  }
+
+  .controls {
+    width: 92vw;
+    margin-top: clamp(76px, 18dvh, 128px);
+    gap: 26px;
+  }
+
+  .generate-button {
+    width: min(21rem, 80vw);
+    min-height: 82px;
+  }
+
+  .seekbar {
+    width: min(27rem, 84vw);
+    height: 28px;
+  }
+
+  .seekbar::-webkit-slider-runnable-track {
+    height: 28px;
+  }
+
+  .seekbar::-webkit-slider-thumb {
+    width: 42px;
+    height: 42px;
+  }
+
+  .seekbar::-moz-range-track,
+  .seekbar::-moz-range-progress {
+    height: 28px;
+  }
+
+  .seekbar::-moz-range-thumb {
+    width: 42px;
+    height: 42px;
+  }
 }
 
 @media (orientation: landscape) and (max-height: 520px) {
   .stage {
-    padding-bottom: 24px;
+    grid-template-rows: minmax(58px, 18dvh) auto 1fr;
+    padding-top: 18px;
+    padding-bottom: 22px;
+  }
+
+  .title-plaque {
+    min-height: 56px;
+  }
+
+  .title-plaque h1 {
+    font-size: clamp(1.6rem, 5vw, 3.2rem);
+  }
+
+  .controls {
+    margin-top: clamp(24px, 9dvh, 48px);
+    gap: 18px;
+  }
+
+  .generate-button {
+    min-height: 64px;
+    font-size: clamp(1.7rem, 5vw, 3.1rem);
+  }
+
+  .seekbar {
+    height: 26px;
+  }
+
+  .seekbar::-webkit-slider-runnable-track {
+    height: 26px;
+  }
+
+  .seekbar::-webkit-slider-thumb {
+    width: 38px;
+    height: 38px;
+    margin-top: -6px;
+  }
+
+  .seekbar::-moz-range-track,
+  .seekbar::-moz-range-progress {
+    height: 26px;
+  }
+
+  .seekbar::-moz-range-thumb {
+    width: 38px;
+    height: 38px;
   }
 }

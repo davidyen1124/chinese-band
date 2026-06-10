@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 
 type PlayerState = 'idle' | 'generating' | 'playing'
 
@@ -56,24 +56,27 @@ class SamplePlayer {
     )
   }
 
-  play(pattern: MusicPattern, onProgress: (progress: number) => void, onDone: () => void) {
+  play(pattern: MusicPattern, startAt: number, onProgress: (progress: number) => void, onDone: () => void) {
+    const safeStartAt = Math.min(pattern.duration, Math.max(0, startAt))
     const startedAt = performance.now()
     const timers: number[] = []
     let animation = 0
     let stopped = false
 
     for (const event of pattern.events) {
+      if (event.time < safeStartAt) continue
       timers.push(window.setTimeout(() => {
         if (stopped) return
         this.startAudio(event.sound, event.volume)
-      }, Math.max(0, event.time * 1000)))
+      }, Math.max(0, (event.time - safeStartAt) * 1000)))
     }
 
     const tick = () => {
       if (stopped) return
       const elapsed = (performance.now() - startedAt) / 1000
-      onProgress(Math.min(1, elapsed / pattern.duration))
-      if (elapsed < pattern.duration) {
+      const currentTime = safeStartAt + elapsed
+      onProgress(Math.min(1, currentTime / pattern.duration))
+      if (currentTime < pattern.duration) {
         animation = requestAnimationFrame(tick)
       }
     }
@@ -83,7 +86,7 @@ class SamplePlayer {
       if (stopped) return
       onProgress(1)
       onDone()
-    }, Math.ceil(pattern.duration * 1000)))
+    }, Math.ceil((pattern.duration - safeStartAt) * 1000)))
 
     return () => {
       stopped = true
@@ -179,6 +182,7 @@ class SamplePlayer {
 function App() {
   const player = useRef(new SamplePlayer())
   const stopPlayback = useRef<() => void>(() => undefined)
+  const currentPattern = useRef<MusicPattern | null>(null)
   const [state, setState] = useState<PlayerState>('idle')
   const [progress, setProgress] = useState(0)
 
@@ -195,10 +199,8 @@ function App() {
       const pattern = await fetchPattern()
       await player.current.preload(pattern.events.map((event) => event.sound))
 
-      setState('playing')
-      stopPlayback.current = player.current.play(pattern, setProgress, () => {
-        setState('idle')
-      })
+      currentPattern.current = pattern
+      playFrom(pattern, 0)
     } catch (error) {
       console.error('Generation failed', error)
       setState('idle')
@@ -206,20 +208,57 @@ function App() {
     }
   }
 
+  function playFrom(pattern: MusicPattern, progressValue: number) {
+    stopPlayback.current()
+    const startAt = pattern.duration * progressValue
+    setProgress(progressValue)
+    setState('playing')
+    stopPlayback.current = player.current.play(pattern, startAt, setProgress, () => {
+      setState('idle')
+      stopPlayback.current = () => undefined
+    })
+  }
+
+  function updateSeek(value: string) {
+    setProgress(Number(value) / 1000)
+  }
+
+  function commitSeek(progressValue = progress) {
+    if (!currentPattern.current || state !== 'playing') return
+    playFrom(currentPattern.current, progressValue)
+  }
+
   const buttonText = state === 'generating'
     ? 'Generating'
     : state === 'playing'
       ? 'Again'
       : 'Generate'
+  const progressValue = Math.round(progress * 1000)
 
   return (
     <main className="screen" aria-label="Chinese Band Jam">
       <div className="stage">
-        <button className="generate-button" disabled={state === 'generating'} onClick={generateAndPlay}>
-          {buttonText}
-        </button>
-        <div className="progress" aria-label="Playback progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress * 100)} role="progressbar">
-          <div style={{ transform: `scaleX(${progress})` }} />
+        <header className="title-plaque">
+          <h1>Chinese Band Jam</h1>
+        </header>
+
+        <div className="controls" style={{ '--progress': `${progress * 100}%` } as CSSProperties}>
+          <button className="generate-button" disabled={state === 'generating'} onClick={generateAndPlay}>
+            <span>{buttonText}</span>
+          </button>
+          <input
+            aria-label="Playback seek"
+            className="seekbar"
+            disabled={state !== 'playing'}
+            max={1000}
+            min={0}
+            onBlur={(event) => commitSeek(Number(event.currentTarget.value) / 1000)}
+            onChange={(event) => updateSeek(event.currentTarget.value)}
+            onKeyUp={(event) => commitSeek(Number(event.currentTarget.value) / 1000)}
+            onPointerUp={(event) => commitSeek(Number(event.currentTarget.value) / 1000)}
+            type="range"
+            value={progressValue}
+          />
         </div>
       </div>
     </main>
