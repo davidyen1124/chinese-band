@@ -88,8 +88,9 @@ async function handleGenerate(request: Request, env: Env): Promise<Response> {
   try {
     const reply = await askYara(env.YARA_CHAT_URL ?? DEFAULT_YARA_CHAT_URL, variation)
     return jsonResponse(normalizePattern(JSON.parse(extractJson(reply))))
-  } catch {
-    return jsonResponse(buildFallbackPattern(variation.seed))
+  } catch (error) {
+    console.error('AI generation failed', error)
+    return jsonResponse({ error: 'AI generation failed' }, 502)
   }
 }
 
@@ -125,37 +126,21 @@ async function askYara(yaraUrl: string, variation: Variation): Promise<string> {
 
 function buildPrompt(variation: Variation): string {
   return [
-    'You generate JSON playback patterns for a mobile browser page called ChineseBand Jam.',
-    `Fresh generation seed: ${variation.seed}`,
-    `This pattern direction: ${variation.style}.`,
-    `Start the guzheng melody with ${variation.start}.`,
-    `Primary rhythm feel: ${variation.rhythm}.`,
-    `Preferred percussion colors: ${variation.percussion}.`,
-    '',
-    'The browser already has these exact MP3 sample files. You must only use these sound names.',
-    `Guzheng sounds: ${GUZHENG_SOUNDS.join(', ')}`,
-    `Percussion sounds: ${PERCUSSION_SOUNDS.join(', ')}`,
-    '',
-    'Return only valid JSON. Do not use markdown. Do not add explanation.',
-    'The JSON shape must be exactly:',
-    '{"title":"ChineseBand Jam","duration":16,"events":[{"time":0,"sound":"c2","volume":0.85}]}',
-    'That line is a shape example only. Do not copy its event.',
-    '',
-    'Rules:',
-    '- duration must be 16 to 20 seconds.',
-    '- events must contain 42 to 72 notes.',
-    '- time is seconds from the start, sorted ascending, from 0 to duration.',
-    '- sound must be one of the available sample names exactly.',
-    '- volume must be a number from 0.05 to 1.',
-    '- Use guzheng as the melody and percussion as sparse accents.',
-    '- Keep it pentatonic, playable, rhythmic, and simple.',
-    '- Make this generation noticeably different from a basic c2,e2,g2,a2 opening.',
-    '- The first four guzheng notes must not be c2,e2,g2,a2 in that order.',
+    'Generate one compact valid JSON object for a mobile browser page called ChineseBand Jam. Return JSON only, no markdown.',
+    `Seed: ${variation.seed}. Style: ${variation.style}. Start melody with ${variation.start}. Rhythm: ${variation.rhythm}. Percussion colors: ${variation.percussion}.`,
+    `Allowed guzheng sounds: ${GUZHENG_SOUNDS.join(',')}.`,
+    `Allowed percussion sounds: ${PERCUSSION_SOUNDS.join(',')}.`,
+    'Shape: {"title":"ChineseBand Jam","duration":16,"events":[{"time":0,"sound":"c2","volume":0.85}]}',
+    'Rules: duration 16-20 seconds. Exactly 36 events. Spread events across the full duration; the last event time must be at least 15.5. Times sorted from 0 to duration. Sounds must be from allowed names. Volume 0.05-1.',
+    'Use guzheng as the melody and percussion as sparse accents. Keep it pentatonic, playable, rhythmic, and simple.',
+    'Make it noticeably different from a basic c2,e2,g2,a2 opening. The first four guzheng notes must not be c2,e2,g2,a2 in that order.',
   ].join('\n')
 }
 
 function normalizePattern(value: unknown): MusicPattern {
-  if (!isRecord(value) || !Array.isArray(value.events)) return buildFallbackPattern()
+  if (!isRecord(value) || !Array.isArray(value.events)) {
+    throw new Error('Generated pattern is missing events')
+  }
 
   const events = value.events.flatMap((event): MusicEvent[] => {
     if (!isRecord(event)) return []
@@ -173,7 +158,9 @@ function normalizePattern(value: unknown): MusicPattern {
     }]
   }).sort((a, b) => a.time - b.time).slice(0, 96)
 
-  if (events.length < 4) return buildFallbackPattern()
+  if (events.length < 24) {
+    throw new Error('Generated pattern has too few playable events')
+  }
 
   const durationValue = typeof value.duration === 'number' ? value.duration : events.at(-1)!.time + 1.2
   const title = typeof value.title === 'string' && value.title.trim() ? value.title.trim().slice(0, 40) : 'ChineseBand Jam'
@@ -203,50 +190,6 @@ function buildVariation(request: GenerateRequest): Variation {
     start: START_NOTES[Math.floor(index / 3) % START_NOTES.length],
     rhythm: RHYTHMS[Math.floor(index / 7) % RHYTHMS.length],
     percussion: PERCUSSION_HINTS[Math.floor(index / 11) % PERCUSSION_HINTS.length],
-  }
-}
-
-function buildFallbackPattern(seed: string = crypto.randomUUID()): MusicPattern {
-  const random = seededRandom(seed)
-  const startIndex = Math.floor(random() * START_NOTES.length)
-  const melodyPool = [
-    ['a1', 'c2', 'd2', 'g2', 'a2', 'c3', 'd3', 'g3'],
-    ['d2', 'e2', 'g2', 'b2', 'd3', 'e3', 'g3', 'b3'],
-    ['g2', 'a2', 'c3', 'd3', 'g3', 'a3', 'c4', 'd4'],
-    ['c3', 'd3', 'e3', 'g3', 'a3', 'c4', 'd4', 'e4'],
-  ][startIndex % 4]
-  const percussionPool = [
-    ['ban', 'luo'],
-    ['tonggu', 'chao'],
-    ['xiangzhan', 'xiaogu'],
-    ['redflowerrim20', 'whiteoperarim25'],
-  ][Math.floor(random() * 4)]
-  const step = [0.25, 0.33, 0.375, 0.5][Math.floor(random() * 4)]
-  const duration = 16 + Math.floor(random() * 5)
-  const events: MusicEvent[] = []
-
-  let time = 0
-  while (time < duration) {
-    const note = melodyPool[Math.floor(random() * melodyPool.length)]
-    events.push({ time: round(time), sound: note, volume: round(0.68 + random() * 0.25) })
-    if (random() > 0.68) {
-      events.push({ time: round(time), sound: percussionPool[Math.floor(random() * percussionPool.length)], volume: round(0.35 + random() * 0.28) })
-    }
-    time += step * (random() > 0.75 ? 2 : 1)
-  }
-
-  return {
-    title: 'ChineseBand Jam',
-    duration,
-    events: events.slice(0, 84).sort((a, b) => a.time - b.time),
-  }
-}
-
-function seededRandom(seed: string): () => number {
-  let state = hashSeed(seed) || 1
-  return () => {
-    state = (state * 1664525 + 1013904223) >>> 0
-    return state / 4294967296
   }
 }
 
