@@ -26,55 +26,47 @@ const SOUND_NAMES = [
 ] as const
 
 const SOUND_SET = new Set<string>(SOUND_NAMES)
+const HTML_AUDIO_POOL_SIZE = 5
 
 class SamplePlayer {
-  private context: AudioContext | null = null
-  private buffers = new Map<string, AudioBuffer>()
+  private pools = new Map<string, HTMLAudioElement[]>()
+  private poolIndexes = new Map<string, number>()
+  private active = new Set<HTMLAudioElement>()
+  private warmupAudio: HTMLAudioElement | null = null
 
   async unlock() {
-    this.context ??= new AudioContext({ latencyHint: 'interactive' })
-    if (this.context.state === 'suspended') {
-      await Promise.race([
-        this.context.resume().catch(() => undefined),
-        wait(500),
-      ])
-    }
+    this.warmupAudio ??= this.createAudio('c1')
+    this.warmupAudio.muted = true
+    this.warmupAudio.volume = 0
+    this.resetAudio(this.warmupAudio)
 
-    const buffer = this.context.createBuffer(1, 1, 22050)
-    const source = this.context.createBufferSource()
-    const gain = this.context.createGain()
-    source.buffer = buffer
-    gain.gain.value = 0
-    source.connect(gain)
-    gain.connect(this.context.destination)
-    source.start(0)
+    const playAttempt = this.warmupAudio.play().catch(() => undefined)
+    await Promise.race([playAttempt, wait(500)])
+    this.warmupAudio.pause()
+    this.resetAudio(this.warmupAudio)
+    this.warmupAudio.muted = false
   }
 
   async preload(names: string[]) {
     const uniqueNames = [...new Set(names)].filter((name) => SOUND_SET.has(name))
     await Promise.all(
       uniqueNames.map(async (name) => {
-        await this.loadBuffer(name)
+        await Promise.all(this.ensurePool(name).map((audio) => this.loadAudio(audio)))
       }),
     )
   }
 
   play(pattern: MusicPattern, onProgress: (progress: number) => void, onDone: () => void) {
-    if (!this.context) return () => undefined
-    if (this.context.state === 'suspended') {
-      void this.context.resume().catch(() => undefined)
-    }
-
     const startedAt = performance.now()
-    const contextStart = this.context.currentTime + 0.08
     const timers: number[] = []
     let animation = 0
     let stopped = false
 
     for (const event of pattern.events) {
-      const buffer = this.buffers.get(event.sound)
-      if (!buffer) continue
-      this.startBuffer(buffer, contextStart + event.time, event.volume)
+      timers.push(window.setTimeout(() => {
+        if (stopped) return
+        this.startAudio(event.sound, event.volume)
+      }, Math.max(0, event.time * 1000)))
     }
 
     const tick = () => {
@@ -97,37 +89,90 @@ class SamplePlayer {
       stopped = true
       cancelAnimationFrame(animation)
       timers.forEach((timer) => clearTimeout(timer))
+      this.stopAll()
     }
   }
 
-  private async loadBuffer(name: string) {
-    if (!this.context || !SOUND_SET.has(name)) return null
-    const existing = this.buffers.get(name)
+  private createAudio(name: string) {
+    const audio = new Audio(`/sounds/${name}.mp3`)
+    audio.preload = 'auto'
+    return audio
+  }
+
+  private ensurePool(name: string) {
+    const existing = this.pools.get(name)
     if (existing) return existing
 
-    try {
-      const response = await fetch(`/sounds/${name}.mp3`)
-      const data = await response.arrayBuffer()
-      const buffer = await Promise.race([
-        this.context.decodeAudioData(data),
-        wait(5000).then(() => null),
-      ])
-      if (buffer) this.buffers.set(name, buffer)
-      return buffer
-    } catch {
-      return null
-    }
+    const pool = Array.from({ length: HTML_AUDIO_POOL_SIZE }, () => this.createAudio(name))
+    this.pools.set(name, pool)
+    this.poolIndexes.set(name, 0)
+    return pool
   }
 
-  private startBuffer(buffer: AudioBuffer, when: number, volume: number) {
-    if (!this.context) return
-    const source = this.context.createBufferSource()
-    const gain = this.context.createGain()
-    source.buffer = buffer
-    gain.gain.value = volume
-    source.connect(gain)
-    gain.connect(this.context.destination)
-    source.start(when)
+  private loadAudio(audio: HTMLAudioElement) {
+    if (audio.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+      return Promise.resolve()
+    }
+
+    return new Promise<void>((resolve) => {
+      const timer = window.setTimeout(finish, 5000)
+
+      function finish() {
+        window.clearTimeout(timer)
+        audio.removeEventListener('canplay', finish)
+        audio.removeEventListener('error', finish)
+        resolve()
+      }
+
+      audio.addEventListener('canplay', finish, { once: true })
+      audio.addEventListener('error', finish, { once: true })
+      audio.load()
+    })
+  }
+
+  private startAudio(name: string, volume: number) {
+    const audio = this.nextAudio(name)
+    if (!audio) return
+
+    audio.pause()
+    this.resetAudio(audio)
+    audio.muted = false
+    audio.volume = volume
+    this.active.add(audio)
+
+    audio.addEventListener('ended', () => {
+      this.active.delete(audio)
+    }, { once: true })
+
+    void audio.play().catch(() => {
+      this.active.delete(audio)
+    })
+  }
+
+  private nextAudio(name: string) {
+    const pool = this.ensurePool(name)
+    const available = pool.find((audio) => audio.paused || audio.ended)
+    if (available) return available
+
+    const index = this.poolIndexes.get(name) ?? 0
+    this.poolIndexes.set(name, (index + 1) % pool.length)
+    return pool[index]
+  }
+
+  private stopAll() {
+    for (const audio of this.active) {
+      audio.pause()
+      this.resetAudio(audio)
+    }
+    this.active.clear()
+  }
+
+  private resetAudio(audio: HTMLAudioElement) {
+    try {
+      audio.currentTime = 0
+    } catch {
+      // The media element may not be seekable until metadata is available.
+    }
   }
 }
 
