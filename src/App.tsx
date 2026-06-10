@@ -26,50 +26,64 @@ const SOUND_NAMES = [
 ] as const
 
 const SOUND_SET = new Set<string>(SOUND_NAMES)
-const HTML_AUDIO_POOL_SIZE = 5
+const MIX_SAMPLE_RATE = 44100
+const MIX_CHANNELS = 2
 
 class SamplePlayer {
-  private pools = new Map<string, HTMLAudioElement[]>()
-  private poolIndexes = new Map<string, number>()
-  private active = new Set<HTMLAudioElement>()
-  private warmupAudio: HTMLAudioElement | null = null
+  private context: AudioContext | null = null
+  private buffers = new Map<string, AudioBuffer>()
+  private playbackAudio: HTMLAudioElement | null = null
+  private silentUrl: string | null = null
+  private playbackUrl: string | null = null
 
   async unlock() {
-    this.warmupAudio ??= this.createAudio('c1')
-    this.warmupAudio.muted = true
-    this.warmupAudio.volume = 0
-    this.resetAudio(this.warmupAudio)
+    this.context ??= new AudioContext()
+    if (this.context.state === 'suspended') {
+      void this.context.resume().catch(() => undefined)
+    }
 
-    const playAttempt = this.warmupAudio.play().catch(() => undefined)
-    await Promise.race([playAttempt, wait(500)])
-    this.warmupAudio.pause()
-    this.resetAudio(this.warmupAudio)
-    this.warmupAudio.muted = false
+    const audio = this.ensurePlaybackAudio()
+    this.silentUrl ??= URL.createObjectURL(encodeWav([new Float32Array(MIX_SAMPLE_RATE)], MIX_SAMPLE_RATE))
+    if (audio.src !== this.silentUrl) {
+      audio.src = this.silentUrl
+    }
+    audio.loop = true
+    audio.muted = false
+    this.resetAudio(audio)
+
+    await Promise.race([
+      audio.play().catch(() => undefined),
+      wait(700),
+    ])
   }
 
   async preload(names: string[]) {
     const uniqueNames = [...new Set(names)].filter((name) => SOUND_SET.has(name))
     await Promise.all(
       uniqueNames.map(async (name) => {
-        await Promise.all(this.ensurePool(name).map((audio) => this.loadAudio(audio)))
+        await this.loadBuffer(name)
       }),
     )
   }
 
   play(pattern: MusicPattern, startAt: number, onProgress: (progress: number) => void, onDone: () => void) {
     const safeStartAt = Math.min(pattern.duration, Math.max(0, startAt))
+    const audio = this.ensurePlaybackAudio()
+    this.clearPlaybackUrl()
+    this.playbackUrl = URL.createObjectURL(this.renderPattern(pattern))
+    audio.pause()
+    audio.loop = false
+    audio.src = this.playbackUrl
+    audio.load()
+    this.resetAudio(audio)
+    this.seekAudio(audio, safeStartAt)
+
     const startedAt = performance.now()
     const timers: number[] = []
     let animation = 0
     let stopped = false
 
-    for (const event of pattern.events) {
-      if (event.time < safeStartAt) continue
-      timers.push(window.setTimeout(() => {
-        if (stopped) return
-        this.startAudio(event.sound, event.volume)
-      }, Math.max(0, (event.time - safeStartAt) * 1000)))
-    }
+    void audio.play().catch(() => undefined)
 
     const tick = () => {
       if (stopped) return
@@ -85,6 +99,8 @@ class SamplePlayer {
     timers.push(window.setTimeout(() => {
       if (stopped) return
       onProgress(1)
+      audio.pause()
+      this.clearPlaybackUrl()
       onDone()
     }, Math.ceil((pattern.duration - safeStartAt) * 1000)))
 
@@ -92,82 +108,72 @@ class SamplePlayer {
       stopped = true
       cancelAnimationFrame(animation)
       timers.forEach((timer) => clearTimeout(timer))
-      this.stopAll()
+      audio.pause()
+      this.resetAudio(audio)
+      this.clearPlaybackUrl()
     }
   }
 
-  private createAudio(name: string) {
-    const audio = new Audio(`/sounds/${name}.mp3`)
+  private ensurePlaybackAudio() {
+    if (this.playbackAudio) return this.playbackAudio
+
+    const audio = new Audio()
     audio.preload = 'auto'
+    audio.style.display = 'none'
+    document.body.appendChild(audio)
+    this.playbackAudio = audio
     return audio
   }
 
-  private ensurePool(name: string) {
-    const existing = this.pools.get(name)
+  private async loadBuffer(name: string) {
+    if (!this.context || !SOUND_SET.has(name)) return null
+    const existing = this.buffers.get(name)
     if (existing) return existing
 
-    const pool = Array.from({ length: HTML_AUDIO_POOL_SIZE }, () => this.createAudio(name))
-    this.pools.set(name, pool)
-    this.poolIndexes.set(name, 0)
-    return pool
+    try {
+      const response = await fetch(`/sounds/${name}.mp3`)
+      const data = await response.arrayBuffer()
+      const buffer = await Promise.race([
+        this.context.decodeAudioData(data),
+        wait(5000).then(() => null),
+      ])
+      if (buffer) this.buffers.set(name, buffer)
+      return buffer
+    } catch {
+      return null
+    }
   }
 
-  private loadAudio(audio: HTMLAudioElement) {
-    if (audio.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
-      return Promise.resolve()
-    }
+  private renderPattern(pattern: MusicPattern) {
+    const frameCount = Math.ceil(pattern.duration * MIX_SAMPLE_RATE)
+    const channels = Array.from({ length: MIX_CHANNELS }, () => new Float32Array(frameCount))
 
-    return new Promise<void>((resolve) => {
-      const timer = window.setTimeout(finish, 5000)
+    for (const event of pattern.events) {
+      const buffer = this.buffers.get(event.sound)
+      if (!buffer) continue
 
-      function finish() {
-        window.clearTimeout(timer)
-        audio.removeEventListener('canplay', finish)
-        audio.removeEventListener('error', finish)
-        resolve()
+      const startFrame = Math.floor(event.time * MIX_SAMPLE_RATE)
+      const maxFrames = Math.min(frameCount - startFrame, Math.ceil(buffer.duration * MIX_SAMPLE_RATE))
+      if (maxFrames <= 0) continue
+
+      for (let channelIndex = 0; channelIndex < channels.length; channelIndex++) {
+        const mixChannel = channels[channelIndex]
+        const sourceChannel = buffer.getChannelData(Math.min(channelIndex, buffer.numberOfChannels - 1))
+
+        for (let frame = 0; frame < maxFrames; frame++) {
+          const sourceFrame = Math.floor(frame * buffer.sampleRate / MIX_SAMPLE_RATE)
+          mixChannel[startFrame + frame] += sourceChannel[sourceFrame] * event.volume
+        }
       }
-
-      audio.addEventListener('canplay', finish, { once: true })
-      audio.addEventListener('error', finish, { once: true })
-      audio.load()
-    })
-  }
-
-  private startAudio(name: string, volume: number) {
-    const audio = this.nextAudio(name)
-    if (!audio) return
-
-    audio.pause()
-    this.resetAudio(audio)
-    audio.muted = false
-    audio.volume = volume
-    this.active.add(audio)
-
-    audio.addEventListener('ended', () => {
-      this.active.delete(audio)
-    }, { once: true })
-
-    void audio.play().catch(() => {
-      this.active.delete(audio)
-    })
-  }
-
-  private nextAudio(name: string) {
-    const pool = this.ensurePool(name)
-    const available = pool.find((audio) => audio.paused || audio.ended)
-    if (available) return available
-
-    const index = this.poolIndexes.get(name) ?? 0
-    this.poolIndexes.set(name, (index + 1) % pool.length)
-    return pool[index]
-  }
-
-  private stopAll() {
-    for (const audio of this.active) {
-      audio.pause()
-      this.resetAudio(audio)
     }
-    this.active.clear()
+
+    return encodeWav(channels, MIX_SAMPLE_RATE)
+  }
+
+  private clearPlaybackUrl() {
+    if (!this.playbackUrl) return
+    URL.revokeObjectURL(this.playbackUrl)
+    this.playbackUrl = null
   }
 
   private resetAudio(audio: HTMLAudioElement) {
@@ -175,6 +181,20 @@ class SamplePlayer {
       audio.currentTime = 0
     } catch {
       // The media element may not be seekable until metadata is available.
+    }
+  }
+
+  private seekAudio(audio: HTMLAudioElement, time: number) {
+    try {
+      audio.currentTime = time
+    } catch {
+      audio.addEventListener('loadedmetadata', () => {
+        try {
+          audio.currentTime = time
+        } catch {
+          // The generated blob can be briefly unseekable before metadata is ready.
+        }
+      }, { once: true })
     }
   }
 }
@@ -313,6 +333,47 @@ function wait(ms: number) {
   return new Promise<null>((resolve) => {
     window.setTimeout(() => resolve(null), ms)
   })
+}
+
+function encodeWav(channels: Float32Array[], sampleRate: number) {
+  const frameCount = channels[0]?.length ?? 0
+  const channelCount = channels.length
+  const bytesPerSample = 2
+  const blockAlign = channelCount * bytesPerSample
+  const dataSize = frameCount * blockAlign
+  const buffer = new ArrayBuffer(44 + dataSize)
+  const view = new DataView(buffer)
+
+  writeString(view, 0, 'RIFF')
+  view.setUint32(4, 36 + dataSize, true)
+  writeString(view, 8, 'WAVE')
+  writeString(view, 12, 'fmt ')
+  view.setUint32(16, 16, true)
+  view.setUint16(20, 1, true)
+  view.setUint16(22, channelCount, true)
+  view.setUint32(24, sampleRate, true)
+  view.setUint32(28, sampleRate * blockAlign, true)
+  view.setUint16(32, blockAlign, true)
+  view.setUint16(34, bytesPerSample * 8, true)
+  writeString(view, 36, 'data')
+  view.setUint32(40, dataSize, true)
+
+  let offset = 44
+  for (let frame = 0; frame < frameCount; frame++) {
+    for (const channel of channels) {
+      const sample = Math.max(-1, Math.min(1, channel[frame]))
+      view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7fff, true)
+      offset += bytesPerSample
+    }
+  }
+
+  return new Blob([buffer], { type: 'audio/wav' })
+}
+
+function writeString(view: DataView, offset: number, value: string) {
+  for (let index = 0; index < value.length; index++) {
+    view.setUint8(offset + index, value.charCodeAt(index))
+  }
 }
 
 function makeSeed() {
