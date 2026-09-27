@@ -1,0 +1,182 @@
+[
+  {
+    "file": "a1.mp3",
+    "sha256": "33ec56d8462426dc2e150cbbb14e07f4860c266363dae537e8cd9754c2a38aaf"
+  },
+  {
+    "file": "a2.mp3",
+    "sha256": "60e6f57e1bb449a7ca81a8d28dde361a82583db38ccb7c40c8a9aea9e6763e80"
+  },
+  {
+    "file": "a3.mp3",
+    "sha256": "47f2a6f7fcb463c0dd00593878bebcbf44788570b621655053c75b7cecfca776"
+  },
+  {
+    "file": "a4.mp3",
+    "sha256": "19634d6f7619a07583c51f1c6b291f73f17789d9a39ebae4d615899e3a1030ca"
+  },
+  {
+    "file": "a5.mp3",
+    "sha256": "58adeb31142542b5b4d83667b746bbf7c107448675ea54273c9fde7152cf4eb8"
+  },
+  {
+    "file": "b1.mp3",
+    "sha256": "a2cda34991cd84493c39dc70359ad67d05e7c8e3b67d10c62fabe5baea01fd46"
+  },
+  {
+    "file": "b2.mp3",
+    "sha256": "a785a0b4b5cb7a5cc1c5ded50f75dc5d0fc4e48a8c8d7dc4329e0eda2a23849d"
+  },
+  {
+    "file": "b3.mp3",
+    "sha256": "1e8c955f53a9e9a9583ad119de37729d2172441fc6d0075087da1b6b172d1546"
+  },
+  {
+    "file": "b4.mp3",
+    "sha256": "082174d878e590ef249c699b67d69615b684c7238a5b87d9635bf6b7fbe5cbdc"
+  },
+  {
+    "file": "b5.mp3",
+    "sha256": "68f84fda1aed712b70732b0a2aa5aadfd1485682d37a88baf9985befeeae5765"
+  },
+  {
+    "file": "ban.mp3",
+    "sha256": "b543d4a5d49255b43a4bc482f4973d240fa02578e1bc6b1e89384b70b67c8034"
+  },
+  {
+    "file": "c1.mp3",
+    "sha256": "3f29af6e236eb1e862dc5e573491e1ed96449db1121489c58958ce4cb630af47"
+  },
+  {
+    "file": "c2.mp3",
+    "sha256": "8512a95a3b18fd1052be11ee3ce1710305fcde283e4480bc058db46259a336c6"
+  },
+  {
+    "file": "c3.mp3",
+    "sha256": "343d9b40b304a31c6df2f171d919361070d24108d89e3d2a7c4085bc91942cb6"
+  },
+  {
+    "file": "c4.mp3",
+    "sha256": "0719d713e3c9a3bbf1871e7e1545ea765d65b0e96430ae15f12f3c2989989f80"
+  },
+  {
+    "file": "c5.mp3",
+    "sha256": "97f11a8efbf8c30a8e4530aee703b2e1c61866d1dc07ad8531bcab091e5414d3"
+  },
+  {
+    "file": "chao.mp3",
+    "sha256": "9ddda3eb635adfbe6d8299856c321066cd2bd7dfd6e4e9d523617cb1c368ace7"
+  },
+  {
+    "file": "d1.mp3",
+    "sha256": "018dd124df8746e57f96877abfc247b6652835fbcb38e432857caeb46798f868"
+  },
+  {
+    "file": "d2.mp3",
+    "sha256": "d6c1d9c78b8ef62ad6d1086548d167625d54b2a68ab39fe8314e379f584e624e"
+  },
+  {
+    "file": "d3.mp3",
+    "sha256": "a34a4fc4e0618cfebc81aa1c309ab894fd2ad9ace22d796167298db0b34422b4"
+  },
+  {
+    "file": "d4.mp3",
+    "sha256": "097dab82ccef65c7064554c7f371d5cb0b60708983013991f7d3d636921f7f2d"
+  },
+  {
+    "file": "d5.mp3",
+    "sha256": "40a3685bcbd59e6229b147cbe0464792b4a3f40a673226323e75cfad52fc69e1"
+  },
+  {
+    "file": "e1.mp3",
+    "sha256": "7097a8e8a82307db5ac5d53aeb757fa3ed7cc5036550b4461d036ef98a57d234"
+  },
+  {
+    "file": "e2.mp3",
+    "sha256": "d352c1c8b4081aab1b21ce26a04ac964ff2372e6641431151378dee772c34b0f"
+  },
+  {
+    "file": "e3.mp3",
+    "sha256": "a5eba78cecf6f55b052de9ebffcf1a8425c0e8acb145293596771d7dbd642475"
+  },
+  {
+    "file": "e4.mp3",
+    "sha256": "cfa696bfbae269150b1c64b111d1b339221ab78b71845114148e29128626c044"
+  },
+  {
+    "file": "e5.mp3",
+    "sha256": "63a92d95b192b053f6860811142f3986b22673ff44be7c93d835a4a888c52aca"
+  },
+  {
+    "file": "g1.mp3",
+    "sha256": "8445ccef056fd19760ab2f95b7b099ee74d79aa95604f127f36e56ec519490ee"
+  },
+  {
+    "file": "g2.mp3",
+    "sha256": "1581a798b69511ccadcb10924fc4f4d2a6e781e6eb8db376a804bd6d25226c27"
+  },
+  {
+    "file": "g3.mp3",
+    "sha256": "9ed82824674e0d6a8e21940dadb533f28af8008d11bd7492d6b406080c6be2e3"
+  },
+  {
+    "file": "g4.mp3",
+    "sha256": "1d921adc358111b78c9707e6fb8ad79c1aeceffaa77b75cd465a80d41e1c51b5"
+  },
+  {
+    "file": "g5.mp3",
+    "sha256": "2db91a268a4f936d1a6248e5a80c7eeab2b1a1ce314f16110a1c0c8c3bcb26f0"
+  },
+  {
+    "file": "kouzi.mp3",
+    "sha256": "80a29517d27cca246d16356d9954436af9965c0af7eb3d62c0fdad7d0ad264b7"
+  },
+  {
+    "file": "lowwar.mp3",
+    "sha256": "362c0727fe015c767ec21ffe32d0b3e8646eeef07726621c652d37717480c46d"
+  },
+  {
+    "file": "lowwarrim.mp3",
+    "sha256": "96d73c950713a91b80dbb211bb3ecffebb64089eb21b7f86aade41aec6a07dad"
+  },
+  {
+    "file": "luo.mp3",
+    "sha256": "a08f060cddf82057664d393e68d0260ccbb4737d9320d0231157a93479df7ae6"
+  },
+  {
+    "file": "redflower20.mp3",
+    "sha256": "1aa091f4cc8c064f5f49052e1d3283ff991261fd4e0639fc7c165e3bf15eaf73"
+  },
+  {
+    "file": "redflower30.mp3",
+    "sha256": "29bec0513c17901c290009f92cdc50f54c13df056f6b87b9329ce1601f2e6a68"
+  },
+  {
+    "file": "redflowerrim20.mp3",
+    "sha256": "065d6dbcb5eb829b7456b3c3cb8b2d504e7496f72ba97246f85280aeda8b1fe3"
+  },
+  {
+    "file": "redflowerrim30.mp3",
+    "sha256": "2310454f27efe148861f94fff9a1105f2aa26aec44eac529c082180330184bb8"
+  },
+  {
+    "file": "tonggu.mp3",
+    "sha256": "e2ee6d44ea2bea61f8aa4897c6a9c896852923d1cc4cbbfe66f7bb9545707e22"
+  },
+  {
+    "file": "whiteopera25.mp3",
+    "sha256": "5a296f9b700e2d37048345936fff45f2dcffca1455162d7d29220cdaddbf4e93"
+  },
+  {
+    "file": "whiteoperarim25.mp3",
+    "sha256": "288acb0001e6a654fc3b2cb8eee1669929bf97307ad685ae7c3bcca251f6c83d"
+  },
+  {
+    "file": "xiangzhan.mp3",
+    "sha256": "b81980bcf4b8cc8adf210b687ae0a3b8d209d236742e54a266e987404869a120"
+  },
+  {
+    "file": "xiaogu.mp3",
+    "sha256": "8d3f5fdc48f64e4e9b9f5a4d9a26e4903844e0db55436d100eb74fa5026db780"
+  }
+]
