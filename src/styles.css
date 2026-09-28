@@ -2742,6 +2742,51 @@ dialog.overlay-dialog {
   }
 }
 
+/* Small desktops and iPads held sideways: keep the nav in the flow and let titles fit their column. */
+@media (min-width: 1000px) and (max-width: 1279px) and (min-height: 560px) {
+  .desktop-nav {
+    position: static;
+    transform: none;
+    align-self: stretch;
+    margin: 0 auto;
+    gap: 40px;
+  }
+  .desktop-nav button {
+    font-size: 17px;
+  }
+  .brand-name {
+    font-size: 17px;
+    letter-spacing: 0.22em;
+  }
+  .seal {
+    width: 40px;
+    height: 40px;
+  }
+  .stage {
+    column-gap: 28px;
+  }
+}
+@media (min-width: 1000px) and (min-height: 560px) {
+  .panel {
+    container-type: inline-size;
+  }
+  .panel-title span,
+  .lang-en .panel-title span {
+    font-size: clamp(38px, 4.2vw, 60px);
+  }
+}
+@container (max-width: 330px) {
+  .panel-title small {
+    display: none;
+  }
+}
+@media (min-width: 1000px) and (max-height: 820px) and (min-height: 560px) {
+  .panel-title span,
+  .lang-en .panel-title span {
+    font-size: clamp(36px, 3.6vw, 48px);
+  }
+}
+
 /* ───────────── Phones ───────────── */
 
 @media (max-width: 600px) {

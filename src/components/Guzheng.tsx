@@ -55,7 +55,7 @@ export const Guzheng = memo(function Guzheng({ engine, register, setRegister, bN
             style={
               {
                 // Treble strings are short, so their bridges sit near the far end; bass bridges walk back.
-                '--bridge': `${88 - (i / last) * 62}%`,
+                '--bridge': `${83 - (i / last) * 58}%`,
                 '--gauge': `${1 + (i / last) * 0.9}px`,
               } as CSSProperties
             }
