@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ChevronDown, Download, FileMusic, Maximize2, Menu, Minimize2, Share2, Volume2, VolumeX, X } from 'lucide-react'
+import { Download, FileMusic, ListMusic, Menu, Share2, Volume2, VolumeX, X } from 'lucide-react'
 import { AudioEngine } from './lib/audio-engine'
 import { defaultSong, keyboardRow, notesForRegister, percussion, type Recording, type Song } from './lib/catalog'
 import { deleteRecording, download, listRecordings, parseRecording, saveRecording, StorageError } from './lib/storage'
@@ -7,7 +7,8 @@ import { flash } from './lib/flash'
 import { I18n, initialLang, isKey, makeT, useI18n, type Lang } from './i18n'
 import { Guzheng } from './components/Guzheng'
 import { Percussion } from './components/Percussion'
-import { NowPlaying, Pill } from './components/Transport'
+import { NowPlaying, RecordTool, StatusIsland } from './components/Transport'
+import { Segmented } from './components/Controls'
 import { Library, type Panel } from './components/Library'
 import { Overlay } from './components/Overlay'
 
@@ -42,11 +43,12 @@ export default function App() {
   const [register, setRegister] = useState(2)
   const [group, setGroup] = useState(0)
   const [bNotes, setBNotes] = useState(false)
-  const [focus, setFocus] = useState(false)
   const [panel, setPanel] = useState<Panel | null>(null)
   const [shownPanel, setShownPanel] = useState<Panel>('menu')
   const [selected, setSelected] = useState<Song>(defaultSong)
   const [playing, setPlaying] = useState(false)
+  // A song is "on" from the moment it starts until it is stopped or runs out.
+  const [songOn, setSongOn] = useState(false)
   const [speed, setSpeed] = useState(1)
   const [loop, setLoop] = useState(false)
   const [volume, setVolume] = useState(0.8)
@@ -117,7 +119,10 @@ export default function App() {
     }
     e.onEnd = () => {
       if (loopRef.current) e.startSong(selectedRef.current)
-      else setPlaying(false)
+      else {
+        setPlaying(false)
+        setSongOn(false)
+      }
     }
     e.load((n) => {
       if (alive) setProgress(n)
@@ -176,10 +181,6 @@ export default function App() {
 
   useEffect(() => {
     const key = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !panel && !edit) {
-        setFocus(false)
-        return
-      }
       if (
         !armed ||
         panel ||
@@ -233,6 +234,7 @@ export default function App() {
     selectedRef.current = song
     engine!.startSong(song)
     setPlaying(true)
+    setSongOn(true)
     setPanel(null)
   }
 
@@ -245,7 +247,14 @@ export default function App() {
     if (!(await enable())) return
     engine!.startSong(selected, engine!.position >= selected.duration ? 0 : engine!.position)
     setPlaying(true)
+    setSongOn(true)
   }
+  const stopSong = () => {
+    engine?.stop()
+    setPlaying(false)
+    setSongOn(false)
+  }
+  const island = recording || songOn
 
   const openShare = (record: Recording) => {
     setShareFile(null)
@@ -309,7 +318,6 @@ export default function App() {
     engine!.startRecording()
     recordingRef.current = true
     setRecording(true)
-    tell(t('toastRecording'))
   }
 
   useEffect(() => {
@@ -365,8 +373,7 @@ export default function App() {
       } else if (edit.kind === 'delete') {
         await deleteRecording(edit.record.id)
         if (selected.id === edit.record.id) {
-          engine?.stop()
-          setPlaying(false)
+          stopSong()
           setSelected(defaultSong)
         }
       }
@@ -394,17 +401,9 @@ export default function App() {
 
   return (
     <I18n.Provider value={i18n}>
-      <div ref={shell} className={`studio-shell ${focus ? 'focus-mode' : ''} lang-${lang}`}>
-        <header className="site-header">
-          <button
-            type="button"
-            className="brand"
-            onClick={() => {
-              openPanel(null)
-              setFocus(false)
-            }}
-            aria-label={t('brandHome')}
-          >
+      <div ref={shell} className={`studio-shell lang-${lang}`}>
+        <header className={`site-header ${island ? 'has-island' : ''}`}>
+          <button type="button" className="brand" onClick={() => openPanel(null)} aria-label={t('brandHome')}>
             <img className="seal" src={`${import.meta.env.BASE_URL}seal.png`} alt="" width={36} height={36} />
             <span className="brand-name" lang="en">
               Chinese Band
@@ -423,6 +422,20 @@ export default function App() {
               </button>
             ))}
           </nav>
+          {island && (
+            <div className="island-slot">
+              <StatusIsland
+                engine={engine}
+                song={selected}
+                playing={playing}
+                recording={recording}
+                onStopRecording={toggleRecording}
+                onPlay={togglePlay}
+                onStopSong={stopSong}
+                onSongs={() => openPanel('songs')}
+              />
+            </div>
+          )}
           <div className="header-actions">
             <button
               type="button"
@@ -433,7 +446,6 @@ export default function App() {
             >
               {t('langToggle')}
             </button>
-            <i className="header-divider" aria-hidden="true" />
             <button
               type="button"
               className="icon-button header-mute"
@@ -442,6 +454,11 @@ export default function App() {
               onClick={() => setVolume(volume === 0 ? unmuteVolume.current || 0.8 : 0)}
             >
               {volume === 0 ? <VolumeX size={22} strokeWidth={1.5} /> : <Volume2 size={22} strokeWidth={1.5} />}
+            </button>
+            <i className="header-divider" aria-hidden="true" />
+            {!recording && <RecordTool onClick={toggleRecording} label={t('record')} />}
+            <button type="button" className="icon-button songs-tool" aria-label={t('openSongs')} onClick={() => openPanel('songs')}>
+              <ListMusic size={23} strokeWidth={1.5} />
             </button>
             <button type="button" className="icon-button" aria-label={t('openMenu')} onClick={() => openPanel('menu')}>
               <Menu size={24} strokeWidth={1.5} />
@@ -457,23 +474,23 @@ export default function App() {
                   <span>{t('guzheng')}</span>
                   <small lang={lang === 'zh' ? 'en' : 'zh-Hant'}>{t('guzhengOther')}</small>
                 </h1>
-                <button type="button" className="key-chip" onClick={() => openPanel('settings')} aria-label={t('keyLabel')}>
-                  <span>{t('keyOfC')}</span>
-                  <ChevronDown size={16} strokeWidth={1.8} />
-                </button>
-                <button
-                  type="button"
-                  className="icon-button focus-toggle"
-                  onClick={() => setFocus(!focus)}
-                  aria-pressed={focus}
-                  aria-label={focus ? t('exitFocusLabel') : t('focusLabel')}
-                >
-                  {focus ? <Minimize2 size={21} strokeWidth={1.5} /> : <Maximize2 size={21} strokeWidth={1.5} />}
-                </button>
+                <Segmented<number>
+                  className="register-select compact"
+                  label={t('register')}
+                  value={register}
+                  onChange={setRegister}
+                  options={(
+                    [
+                      [1, 'regLow'],
+                      [2, 'regMid'],
+                      [3, 'regHigh'],
+                    ] as const
+                  ).map(([value, key]) => ({ value, label: t(key), aria: t('regLabel', { name: t(key) }) }))}
+                />
                 <PageDots mode={mode} setMode={setMode} />
               </div>
               <div className="panel-body">
-                <Guzheng engine={engine} register={register} setRegister={setRegister} bNotes={bNotes} enabled={armed} />
+                <Guzheng engine={engine} register={register} bNotes={bNotes} enabled={armed} />
               </div>
             </section>
             <i className="stage-divider" aria-hidden="true" />
@@ -502,19 +519,6 @@ export default function App() {
               </div>
             )}
           </div>
-          <div className="pill-dock">
-            <Pill
-              engine={engine}
-              song={selected}
-              playing={playing}
-              speed={speed}
-              recording={recording}
-              onRecord={toggleRecording}
-              onPlay={togglePlay}
-              onSongs={() => openPanel('songs')}
-              onSettings={() => openPanel('settings')}
-            />
-          </div>
         </main>
 
         <Library
@@ -526,10 +530,7 @@ export default function App() {
               loop={loop}
               speed={speed}
               onPlay={togglePlay}
-              onStop={() => {
-                engine?.stop()
-                setPlaying(false)
-              }}
+              onStop={stopSong}
               onLoop={() => setLoop(!loop)}
               onTempo={() => openPanel('settings')}
             />

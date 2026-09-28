@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Pause, Play, Repeat2, RotateCcw, Settings, Square } from 'lucide-react'
+import { Pause, Play, Repeat2, RotateCcw, Square, X } from 'lucide-react'
 import { Slider } from './Controls'
 import { formatTime, type Song } from '../lib/catalog'
 import type { AudioEngine } from '../lib/audio-engine'
@@ -7,85 +7,73 @@ import { usePosition } from '../lib/usePosition'
 import { useI18n } from '../i18n'
 import { songTitle } from './songText'
 
-type PillProps = {
+type IslandProps = {
   engine: AudioEngine | null
   song: Song
   playing: boolean
-  speed: number
   recording: boolean
-  onRecord: () => void
+  onStopRecording: () => void
   onPlay: () => void
+  onStopSong: () => void
   onSongs: () => void
-  onSettings: () => void
 }
 
-/** The one floating control: record, the song with its progress ring, and settings. */
-export function Pill({ engine, song, playing, speed, recording, onRecord, onPlay, onSongs, onSettings }: PillProps) {
+/**
+ * The header's live status: a recording timer while recording, otherwise the
+ * song that is playing. Nothing at all when neither is happening.
+ */
+export function StatusIsland({ engine, song, playing, recording, onStopRecording, onPlay, onStopSong, onSongs }: IslandProps) {
   const { t, lang } = useI18n()
   const [position] = usePosition(engine, `${song.id}-${playing}`)
-  const title = songTitle(song, lang)
-  const progress = song.duration ? Math.min(1, position / song.duration) : 0
-  // A recording's tempo is just whatever the backing track was doing; leave it off.
-  const bpm = song.category === '錄音' ? '' : `${Math.round(song.bpm * speed)} BPM`
-  return (
-    <section className="pill" aria-label={t('player')}>
-      <RecordButton active={recording} engine={engine} onClick={onRecord} />
-      <i className="pill-divider" aria-hidden="true" />
-      <div className="pill-player">
-        <button type="button" className="pill-play" onClick={onPlay} aria-label={playing ? t('pause') : t('play')}>
-          <svg className="ring" viewBox="0 0 48 48" aria-hidden="true">
-            <circle className="ring-track" cx="24" cy="24" r="21.5" />
-            <circle
-              className="ring-fill"
-              cx="24"
-              cy="24"
-              r="21.5"
-              pathLength="100"
-              strokeDasharray={`${Math.max(0.01, progress * 100)} 100`}
-            />
-          </svg>
-          {playing ? <Pause size={17} fill="currentColor" strokeWidth={0} /> : <Play size={17} fill="currentColor" strokeWidth={0} />}
-        </button>
-        <button type="button" className="pill-song" onClick={onSongs} aria-label={`${t('openSongs')} · ${title.main}`}>
-          <span className="pill-line">
-            <strong className="pill-title">{title.main}</strong>
-            {bpm && <small className="pill-bpm pill-bpm-top">{bpm}</small>}
-          </span>
-          <span className="pill-sub">
-            {title.sub && <span>{title.sub}</span>}
-            {bpm && <small className="pill-bpm">{bpm}</small>}
-          </span>
-          <span className="pill-time">
-            {formatTime(position)} / {formatTime(song.duration)}
-            {bpm && <small className="pill-bpm pill-bpm-time">{bpm}</small>}
-          </span>
+  const [elapsed, setElapsed] = useState(0)
+  useEffect(() => {
+    if (!recording) return
+    const timer = setInterval(() => setElapsed(engine?.recordingDuration ?? 0), 100)
+    return () => clearInterval(timer)
+  }, [recording, engine])
+
+  if (recording)
+    return (
+      <div className="island island-rec" role="status">
+        <span className="rec-dot" aria-hidden="true" />
+        <span className="island-label">{t('recordingNow')}</span>
+        <time className="island-time">{formatTime(elapsed)}</time>
+        <button type="button" className="island-action" onClick={onStopRecording} aria-label={t('recordStop')}>
+          <Square size={11} fill="currentColor" strokeWidth={0} />
+          <span>{t('finish')}</span>
         </button>
       </div>
-      <i className="pill-divider" aria-hidden="true" />
-      <button type="button" className="pill-gear" onClick={onSettings} aria-label={t('openSettings')}>
-        <Settings size={22} strokeWidth={1.5} />
+    )
+
+  const title = songTitle(song, lang)
+  const progress = song.duration ? Math.min(1, position / song.duration) : 0
+  return (
+    <div className="island island-song" role="group" aria-label={t('player')}>
+      <button type="button" className="island-play" onClick={onPlay} aria-label={playing ? t('pause') : t('play')}>
+        {playing ? <Pause size={15} fill="currentColor" strokeWidth={0} /> : <Play size={15} fill="currentColor" strokeWidth={0} />}
       </button>
-    </section>
+      <button type="button" className="island-song-title" onClick={onSongs} aria-label={`${t('openSongs')} · ${title.main}`}>
+        <strong>{title.main}</strong>
+        <time>
+          {formatTime(position)} / {formatTime(song.duration)}
+        </time>
+      </button>
+      <button type="button" className="island-close" onClick={onStopSong} aria-label={t('stop')}>
+        <X size={16} strokeWidth={1.8} />
+      </button>
+      <i className="island-progress" style={{ transform: `scaleX(${progress})` }} aria-hidden="true" />
+    </div>
   )
 }
 
-function RecordButton({ active, engine, onClick }: { active: boolean; engine: AudioEngine | null; onClick: () => void }) {
-  const { t } = useI18n()
-  const [elapsed, setElapsed] = useState(0)
-  useEffect(() => {
-    if (!active) return
-    const timer = setInterval(() => setElapsed(engine?.recordingDuration ?? 0), 100)
-    return () => clearInterval(timer)
-  }, [active, engine])
+/** The record button in the header. */
+export function RecordTool({ onClick, label }: { onClick: () => void; label: string }) {
   return (
-    <button
-      type="button"
-      className={`pill-record ${active ? 'recording' : ''}`}
-      onClick={onClick}
-      aria-label={active ? t('recordStop') : t('recordStart')}
-    >
-      <span className="record-dot" />
-      <span className="record-label">{active ? t('saveRecording', { time: formatTime(elapsed) }) : t('record')}</span>
+    <button type="button" className="record-tool" onClick={onClick} aria-label={label}>
+      <span className="rec-ring" aria-hidden="true">
+        <i />
+      </span>
+      <span className="record-tool-label">{label}</span>
     </button>
   )
 }
