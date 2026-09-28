@@ -4,8 +4,8 @@ export type Lang = 'zh' | 'en'
 
 const zh = {
   htmlLang: 'zh-Hant',
-  docTitle: '清音 Qingyin · 古箏與打擊樂',
-  brandHome: '清音，回到演奏',
+  docTitle: 'Chinese Band · 古箏與打擊樂',
+  brandHome: 'Chinese Band，回到演奏',
   mainNav: '主要選單',
   navPlay: '演奏',
   navSongs: '曲目',
@@ -72,7 +72,7 @@ const zh = {
   sheetSettings: '演奏設定',
   sheetSettingsDesc: '調整適合自己的演奏方式。',
   sheetMenu: '選單',
-  sheetMenuDesc: '清音 · Qingyin',
+  sheetMenuDesc: '古箏 · 鑼鼓 · 錄音分享',
   menuSongs: '聆聽與合奏',
   menuRecordings: '回放、匯出與分享',
   menuGuide: '認識古箏與打擊樂',
@@ -80,13 +80,8 @@ const zh = {
   language: '語言',
   originals: '原版珍藏',
   originalsNote: 'Chinese Band · 2012',
-  studies: '清音新編',
+  studies: '新編小品',
   studiesNote: 'New studies',
-  subOriginal: '原版曲目 · 多聲部',
-  subStudy: '清音新編 · 古箏小品',
-  subDrums: '清音新編 · 打擊樂練習',
-  subRecording: '我的錄音',
-  subImported: '匯入錄音',
   playSong: '播放 {title}',
   nowPlaying: '播放中',
   songsNote: '三首原版曲目保留原有音符、聲部與速度。新編小品可自由練習。',
@@ -99,7 +94,7 @@ const zh = {
   shareItem: '分享 {title}',
   deleteItem: '刪除 {title}',
   recordingsNote:
-    '支援清音 JSON 樂譜與舊版 Chinese Band TXT。錄音最長 5 分鐘；清除瀏覽器資料會移除本機錄音，請匯出備份。',
+    '支援 JSON 樂譜與 2012 年版的 TXT 樂譜。錄音最長 5 分鐘；清除瀏覽器資料會移除本機錄音，請匯出備份。',
   masterVolume: '主音量',
   backingVolume: '伴奏音量',
   songTempo: '曲目速度',
@@ -117,7 +112,7 @@ const zh = {
   credits: '聲音的來處',
   credits1: 'Chinese Band 1.3 · 2012\nDesigned in Taiwan · Dev.Android',
   credits2:
-    '原作者：Hsin‑Chien CHENG、Jun‑An YEN、Yo‑Wei TENG。清音保留 30 個古箏音色、15 個打擊樂音色與 3 首原版示範曲，重新設計網頁演奏與錄音介面。',
+    '原作者：Hsin‑Chien CHENG、Jun‑An YEN、Yo‑Wei TENG。網頁版保留 30 個古箏音色、15 個打擊樂音色與 3 首原版示範曲，重新設計演奏與錄音介面。',
   renameTitle: '重新命名',
   renameDesc: '為這段音樂留下一個名字。',
   renameInput: '錄音名稱',
@@ -129,11 +124,11 @@ const zh = {
   confirmDelete: '確認刪除',
   shareTitle: '讓朋友聽見',
   shareMaking: '正在製作 WAV 音訊…',
-  shareReady: 'WAV 音訊已備妥，朋友無需安裝清音即可聆聽。',
+  shareReady: 'WAV 音訊已備妥，朋友不必安裝任何東西就能聆聽。',
   shareError: '音訊匯出未完成。你仍可下載樂譜備份。',
   shareAudio: '分享音訊',
   downloadAudio: '下載音訊 · WAV',
-  downloadScore: '下載樂譜 · 可匯入清音',
+  downloadScore: '下載樂譜 · 可再匯入',
   dismiss: '關閉提示',
   toastNoNotes: '沒有錄到音符。彈奏後再儲存試試。',
   toastSaved: '已存入「我的錄音」，可回放與分享。',
@@ -145,7 +140,7 @@ const zh = {
   errStorageOpen: '無法開啟儲存空間，請先匯出錄音。',
   errStorageFull: '儲存空間不足，請匯出錄音後重試。',
   errTooLarge: '檔案超過 2 MB。',
-  errUnreadable: '無法讀取檔案。請選擇清音 JSON 或 Chinese Band TXT 樂譜。',
+  errUnreadable: '無法讀取檔案。請選擇 JSON 樂譜或 2012 年版的 TXT 樂譜。',
   errBadScore: '樂譜格式不正確，或長度超過 5 分鐘。',
   errBadNotes: '樂譜含有無效的音符或時間。',
   guzhengBoard: '古箏演奏區',
@@ -158,8 +153,8 @@ export type Key = keyof typeof zh
 
 const en: Record<Key, string> = {
   htmlLang: 'en',
-  docTitle: 'Qingyin 清音 · Guzheng & Chinese percussion',
-  brandHome: 'Qingyin, back to playing',
+  docTitle: 'Chinese Band · Guzheng & Chinese percussion',
+  brandHome: 'Chinese Band, back to playing',
   mainNav: 'Main',
   navPlay: 'Play',
   navSongs: 'Songs',
@@ -226,7 +221,7 @@ const en: Record<Key, string> = {
   sheetSettings: 'Settings',
   sheetSettingsDesc: 'Tune the studio to the way you play.',
   sheetMenu: 'Menu',
-  sheetMenuDesc: 'Qingyin · 清音',
+  sheetMenuDesc: 'Guzheng · gongs & drums · recordings',
   menuSongs: 'Listen and play along',
   menuRecordings: 'Replay, export and share',
   menuGuide: 'Meet the guzheng and drums',
@@ -235,12 +230,7 @@ const en: Record<Key, string> = {
   originals: 'The originals',
   originalsNote: 'Chinese Band · 2012',
   studies: 'New studies',
-  studiesNote: '清音新編',
-  subOriginal: 'Original · multi-part',
-  subStudy: 'Guzheng study',
-  subDrums: 'Percussion study',
-  subRecording: 'My recording',
-  subImported: 'Imported score',
+  studiesNote: '新編小品',
   playSong: 'Play {title}',
   nowPlaying: 'Now playing',
   songsNote:
@@ -254,7 +244,7 @@ const en: Record<Key, string> = {
   shareItem: 'Share {title}',
   deleteItem: 'Delete {title}',
   recordingsNote:
-    'Imports Qingyin JSON scores and legacy Chinese Band TXT files. Recordings last up to 5 minutes and live in this browser — clearing site data erases them, so export a backup.',
+    'Imports JSON scores and TXT files from the 2012 app. Recordings last up to 5 minutes and live in this browser — clearing site data erases them, so export a backup.',
   masterVolume: 'Master volume',
   backingVolume: 'Backing volume',
   songTempo: 'Song tempo',
@@ -277,7 +267,7 @@ const en: Record<Key, string> = {
   credits: 'Where the sound comes from',
   credits1: 'Chinese Band 1.3 · 2012\nDesigned in Taiwan · Dev.Android',
   credits2:
-    'Original authors: Hsin‑Chien CHENG, Jun‑An YEN and Yo‑Wei TENG. Qingyin keeps all 30 guzheng samples, 15 percussion samples and 3 original demo songs, with a redesigned web instrument and recorder.',
+    'Original authors: Hsin‑Chien CHENG, Jun‑An YEN and Yo‑Wei TENG. This web version keeps all 30 guzheng samples, 15 percussion samples and 3 original demo songs, with a redesigned web instrument and recorder.',
   renameTitle: 'Rename',
   renameDesc: 'Give this piece a name.',
   renameInput: 'Recording name',
@@ -305,7 +295,7 @@ const en: Record<Key, string> = {
   errStorageOpen: 'Couldn’t open local storage. Export your recordings first.',
   errStorageFull: 'Storage is full. Export some recordings and try again.',
   errTooLarge: 'That file is over 2 MB.',
-  errUnreadable: 'Couldn’t read that file. Choose a Qingyin JSON or Chinese Band TXT score.',
+  errUnreadable: 'Couldn’t read that file. Choose a JSON score or a TXT file from the 2012 app.',
   errBadScore: 'That score is malformed or longer than 5 minutes.',
   errBadNotes: 'That score contains unknown notes or times.',
   guzhengBoard: 'Guzheng strings',
@@ -331,7 +321,7 @@ export function initialLang(): Lang {
   const url = new URLSearchParams(location.search).get('lang')
   if (url === 'zh' || url === 'en') return url
   try {
-    const saved = localStorage.getItem('qingyin-lang')
+    const saved = localStorage.getItem('chinese-band-lang')
     if (saved === 'zh' || saved === 'en') return saved
   } catch {
     // Private mode: fall through to the browser language.

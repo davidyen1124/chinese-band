@@ -7,7 +7,7 @@ export class StorageError extends Error {}
 
 async function db() {
   return new Promise<IDBDatabase>((resolve, reject) => {
-    const request = indexedDB.open('qingyin-v1', 1)
+    const request = indexedDB.open('chinese-band-v1', 1)
     request.onupgradeneeded = () => request.result.createObjectStore(STORE, { keyPath: 'id' })
     request.onsuccess = () => resolve(request.result)
     request.onerror = () => reject(new StorageError('errStorageOpen'))
@@ -72,7 +72,7 @@ const legacyPercussion = [
   'xiaogu',
 ]
 
-/** Accepts Qingyin JSON scores and the 2012 Chinese Band Android TXT format. */
+/** Accepts JSON scores and the TXT format saved by the 2012 Android app. */
 export function parseRecording(text: string): Recording {
   if (text.length > 2_000_000) throw new StorageError('errTooLarge')
   let input: unknown

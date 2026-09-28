@@ -122,7 +122,7 @@ export const Instrument = memo(function Instrument({ engine, mode, register, bNo
         <div className="board-signature" aria-hidden="true">
           <span>古箏</span>
           <i />
-          <span className="signature-small">清音</span>
+          <img className="signature-seal" src={`${import.meta.env.BASE_URL}seal.png`} alt="" width={26} height={26} />
         </div>
       </div>
     )

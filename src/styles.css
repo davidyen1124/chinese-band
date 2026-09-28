@@ -1,4 +1,4 @@
-/* 清音 Qingyin — rice paper, pine ink, cinnabar seal, walnut board. */
+/* Chinese Band — rice paper, pine ink, cinnabar seal, walnut board. */
 
 :root {
   --paper: #f3efe6;
@@ -150,20 +150,12 @@ img {
 .brand-name {
   font-family: var(--serif);
   font-weight: 600;
-  font-size: 24px;
+  font-size: 17px;
   line-height: 1;
-  letter-spacing: 0.14em;
-  margin-right: -0.14em;
-}
-.brand-english {
-  font-size: 11px;
-  line-height: 1;
-  font-weight: 500;
-  letter-spacing: 0.26em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--ink-3);
-  padding: 3px 0 3px 12px;
-  border-left: 1px solid var(--line-strong);
+  white-space: nowrap;
+  margin-right: -0.16em;
 }
 .desktop-nav {
   position: absolute;
@@ -1961,12 +1953,10 @@ dialog.overlay-dialog {
     height: 64px;
     background: rgb(197 169 122 / 0.45);
   }
-  .signature-small {
-    writing-mode: vertical-rl;
-    font-family: var(--serif);
-    font-size: 13px;
-    letter-spacing: 0.3em;
-    color: rgb(197 169 122 / 0.7);
+  .signature-seal {
+    width: 26px;
+    height: 26px;
+    opacity: 0.9;
   }
 }
 @media (min-width: 1000px) and (hover: hover) and (pointer: fine) {
@@ -2050,13 +2040,19 @@ dialog.overlay-dialog {
     --gutter: 28px;
   }
   .desktop-nav {
-    gap: 26px;
+    /* In the flow, so a long wordmark and the nav can never collide. */
+    position: static;
+    transform: none;
+    align-self: stretch;
+    margin: 0 auto -1px;
+    gap: 22px;
   }
   .desktop-nav button {
-    font-size: 15px;
+    font-size: 14px;
   }
-  .brand-english {
-    display: none;
+  .brand-name {
+    font-size: 15px;
+    letter-spacing: 0.14em;
   }
   .instrument-title > span {
     display: none;
@@ -2094,9 +2090,6 @@ dialog.overlay-dialog {
   }
   .mobile-menu {
     display: inline-flex;
-  }
-  .brand-english {
-    display: block;
   }
 }
 
@@ -2173,12 +2166,8 @@ dialog.overlay-dialog {
     height: 30px;
   }
   .brand-name {
-    font-size: 22px;
-  }
-  .brand-english {
-    font-size: 10px;
-    letter-spacing: 0.24em;
-    padding-left: 10px;
+    font-size: 15px;
+    letter-spacing: 0.14em;
   }
   .header-actions {
     gap: 2px;
@@ -2438,9 +2427,6 @@ dialog.overlay-dialog {
 }
 
 @media (max-width: 360px) {
-  .brand-english {
-    display: none;
-  }
   .volume-control {
     max-width: 110px;
   }
@@ -2478,15 +2464,12 @@ dialog.overlay-dialog {
   .desktop-settings {
     display: inline-flex;
   }
-  .brand-english {
-    display: none;
-  }
   .seal {
     width: 26px;
     height: 26px;
   }
   .brand-name {
-    font-size: 19px;
+    font-size: 14px;
   }
   .lang-button {
     height: 30px;

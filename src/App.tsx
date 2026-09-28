@@ -28,7 +28,7 @@ import { Segmented, Slider } from './components/Controls'
 type Edit = { kind: 'rename' | 'delete' | 'share'; record: Recording }
 type Mode = 'guzheng' | 'percussion'
 
-const SETTINGS_KEY = 'qingyin-settings-v1'
+const SETTINGS_KEY = 'chinese-band-settings-v1'
 
 export default function App() {
   const [lang, setLangState] = useState<Lang>(initialLang)
@@ -36,7 +36,7 @@ export default function App() {
   const setLang = useCallback((l: Lang) => {
     setLangState(l)
     try {
-      localStorage.setItem('qingyin-lang', l)
+      localStorage.setItem('chinese-band-lang', l)
     } catch {
       // Private mode: the choice lasts for this visit.
     }
@@ -410,10 +410,9 @@ export default function App() {
             aria-label={t('brandHome')}
           >
             <img className="seal" src={`${import.meta.env.BASE_URL}seal.png`} alt="" width={36} height={36} />
-            <span className="brand-name" lang="zh-Hant">
-              清音
+            <span className="brand-name" lang="en">
+              Chinese Band
             </span>
-            <span className="brand-english">Qingyin</span>
           </button>
           <nav className="desktop-nav" aria-label={t('mainNav')}>
             <button type="button" aria-current={panel === null ? 'page' : undefined} onClick={() => openPanel(null)}>

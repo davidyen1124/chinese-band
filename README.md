@@ -1,13 +1,13 @@
 <p align="center">
-  <img src="docs/social-preview.jpg" alt="清音 Qingyin — a guzheng you can play in the browser" width="720">
+  <img src="docs/social-preview.jpg" alt="Chinese Band — a guzheng you can play in the browser" width="720">
 </p>
 
-# 清音 Qingyin
+# Chinese Band
 
 **A guzheng and a pile of Chinese opera percussion that live in your browser tab.**
 No app store, no account, no subscription, no AI, no "join the waitlist." You touch a string, a string makes a sound. We are as shocked as you are.
 
-**▶ Play it:** [davidyen1124.github.io/chinese-band-jam](https://davidyen1124.github.io/chinese-band-jam/)
+**▶ Play it:** [davidyen1124.github.io/chinese-band](https://davidyen1124.github.io/chinese-band/)
 
 <p align="center">
   <img src="docs/screenshot-guzheng-zh.png" alt="Guzheng, Chinese UI" width="250">
@@ -36,6 +36,7 @@ No app store, no account, no subscription, no AI, no "join the waitlist." You to
 | A single "Generate" button that asked a language model to compose music | Deleted | It was a button that cost money to press. |
 | A Cloudflare Worker proxying said language model | Deleted | A static page does not need an edge runtime. It barely needs a runtime. |
 | **Air play**: waving your hand over the laptop to strum the guzheng via 19 kHz Doppler sonar through the mic and speakers | Deleted | It worked, technically, on one MacBook, while the dog left the room. |
+| A second name, 清音 Qingyin, plus a third one, `chinese-band-jam` | Deleted | One app, one name. It only took three names to get here. |
 
 ## Run it
 
@@ -70,6 +71,6 @@ The build uses relative paths, so `dist/` also works from a subfolder, a custom 
 
 **Is it accurate?** The green strings are the "5" (sol), just like a real guzheng. The bridges sit on a diagonal, just like a real guzheng. It does not need tuning for forty minutes before every lesson, unlike a real guzheng.
 
-**Why is the repo called `chinese-band-jam` if the app is called 清音?** Naming things is one of the two hard problems in computer science. We chose to solve neither.
+**Why is it called Chinese Band?** It's what the 2012 app was called, the samples still answer to it, and after a brief identity crisis as 清音, Qingyin and `chinese-band-jam`, we ran out of naming budget. Naming things is one of the two hard problems in computer science. We solved it by giving up.
 
 **Can I play it in a real concert?** You can. We can't stop you. Please send video.
