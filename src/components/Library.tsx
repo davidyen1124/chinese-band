@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, type ReactNode } from 'react'
 import { ChevronRight, Music2, Pencil, Play, Share2, Trash2, Upload } from 'lucide-react'
 import { Overlay } from './Overlay'
 import { Segmented, Slider, Switch } from './Controls'
@@ -9,6 +9,7 @@ import { songTitle } from './songText'
 export type Panel = 'songs' | 'recordings' | 'guide' | 'settings' | 'menu'
 
 type Props = {
+  nowPlaying: ReactNode
   panel: Panel | null
   shown: Panel
   setPanel: (p: Panel | null) => void
@@ -78,6 +79,7 @@ export function Library(p: Props) {
 
       {p.shown === 'songs' && (
         <>
+          {p.nowPlaying}
           {(['原版', '新編'] as const).map((category) => (
             <section className="song-section" key={category}>
               <h3>

@@ -25,6 +25,8 @@ export type Percussion = {
   pinyin: string
   group: number
   material: 'skin' | 'wood' | 'metal'
+  /** Mineral pigment the pad is painted in. */
+  pigment: string
   zh: string
   enNote: string
   art?: string
@@ -33,6 +35,7 @@ export type Percussion = {
 export const percussion: Percussion[] = [
   {
     id: 'tonggu',
+    pigment: 'cinnabar',
     material: 'skin',
     name: '堂鼓',
     en: 'Tanggu',
@@ -44,6 +47,7 @@ export const percussion: Percussion[] = [
   },
   {
     id: 'ban',
+    pigment: 'pine',
     material: 'wood',
     name: '板',
     en: 'Clapper',
@@ -55,6 +59,7 @@ export const percussion: Percussion[] = [
   },
   {
     id: 'chao',
+    pigment: 'gamboge',
     material: 'metal',
     name: '鈸',
     en: 'Cymbals',
@@ -66,6 +71,7 @@ export const percussion: Percussion[] = [
   },
   {
     id: 'kouzi',
+    pigment: 'azurite',
     material: 'wood',
     name: '梆子',
     en: 'Woodblock',
@@ -77,6 +83,7 @@ export const percussion: Percussion[] = [
   },
   {
     id: 'luo',
+    pigment: 'ochre',
     material: 'metal',
     name: '鑼',
     en: 'Gong',
@@ -88,6 +95,7 @@ export const percussion: Percussion[] = [
   },
   {
     id: 'xiangzhan',
+    pigment: 'ink',
     material: 'metal',
     name: '響盞',
     en: 'Small gong',
@@ -99,6 +107,7 @@ export const percussion: Percussion[] = [
   },
   {
     id: 'xiaogu',
+    pigment: 'vermilion',
     material: 'skin',
     name: '小鼓',
     en: 'Bangu',
@@ -108,14 +117,14 @@ export const percussion: Percussion[] = [
     enNote: 'A tight, crisp drum that leads the rhythm of Chinese opera.',
     art: 'xiaogu',
   },
-  { id: 'lowwar', material: 'skin', name: '低音戰鼓', en: 'Low war drum', pinyin: 'zhàn gǔ', group: 1, zh: '鼓心', enNote: 'Centre' },
-  { id: 'lowwarrim', material: 'skin', name: '戰鼓鼓邊', en: 'War drum rim', pinyin: 'gǔ biān', group: 1, zh: '鼓邊', enNote: 'Rim' },
-  { id: 'redflower30', material: 'skin', name: '大花盆鼓', en: 'Large pot drum', pinyin: 'huā pén gǔ', group: 1, zh: '30 · 鼓心', enNote: '30 · Centre' },
-  { id: 'redflowerrim30', material: 'skin', name: '大花盆鼓邊', en: 'Large pot rim', pinyin: 'gǔ biān', group: 1, zh: '30 · 鼓邊', enNote: '30 · Rim' },
-  { id: 'redflower20', material: 'skin', name: '小花盆鼓', en: 'Small pot drum', pinyin: 'huā pén gǔ', group: 1, zh: '20 · 鼓心', enNote: '20 · Centre' },
-  { id: 'redflowerrim20', material: 'skin', name: '小花盆鼓邊', en: 'Small pot rim', pinyin: 'gǔ biān', group: 1, zh: '20 · 鼓邊', enNote: '20 · Rim' },
-  { id: 'whiteopera25', material: 'skin', name: '戲曲鼓', en: 'Opera drum', pinyin: 'xì qǔ gǔ', group: 1, zh: '25 · 鼓心', enNote: '25 · Centre' },
-  { id: 'whiteoperarim25', material: 'skin', name: '戲曲鼓邊', en: 'Opera drum rim', pinyin: 'gǔ biān', group: 1, zh: '25 · 鼓邊', enNote: '25 · Rim' },
+  { id: 'lowwar', pigment: 'cinnabar', material: 'skin', name: '低音戰鼓', en: 'Low war drum', pinyin: 'zhàn gǔ', group: 1, zh: '鼓心', enNote: 'Centre' },
+  { id: 'lowwarrim', pigment: 'cinnabar-deep', material: 'skin', name: '戰鼓鼓邊', en: 'War drum rim', pinyin: 'gǔ biān', group: 1, zh: '鼓邊', enNote: 'Rim' },
+  { id: 'redflower30', pigment: 'pine', material: 'skin', name: '大花盆鼓', en: 'Large pot drum', pinyin: 'huā pén gǔ', group: 1, zh: '30 · 鼓心', enNote: '30 · Centre' },
+  { id: 'redflowerrim30', pigment: 'pine-deep', material: 'skin', name: '大花盆鼓邊', en: 'Large pot rim', pinyin: 'gǔ biān', group: 1, zh: '30 · 鼓邊', enNote: '30 · Rim' },
+  { id: 'redflower20', pigment: 'azurite', material: 'skin', name: '小花盆鼓', en: 'Small pot drum', pinyin: 'huā pén gǔ', group: 1, zh: '20 · 鼓心', enNote: '20 · Centre' },
+  { id: 'redflowerrim20', pigment: 'azurite-deep', material: 'skin', name: '小花盆鼓邊', en: 'Small pot rim', pinyin: 'gǔ biān', group: 1, zh: '20 · 鼓邊', enNote: '20 · Rim' },
+  { id: 'whiteopera25', pigment: 'ink', material: 'skin', name: '戲曲鼓', en: 'Opera drum', pinyin: 'xì qǔ gǔ', group: 1, zh: '25 · 鼓心', enNote: '25 · Centre' },
+  { id: 'whiteoperarim25', pigment: 'ink-deep', material: 'skin', name: '戲曲鼓邊', en: 'Opera drum rim', pinyin: 'gǔ biān', group: 1, zh: '25 · 鼓邊', enNote: '25 · Rim' },
 ]
 
 export const allNotes = [...pitched, ...percussion.map((p) => p.id)]

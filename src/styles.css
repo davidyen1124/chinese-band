@@ -1,4 +1,4 @@
-/* Chinese Band — rice paper, pine ink, cinnabar seal, walnut board. */
+/* Chinese Band — rice paper, pine ink, mineral pigments, walnut board. */
 
 :root {
   --paper: #f3efe6;
@@ -16,6 +16,8 @@
   --cinnabar: #b23a2a;
   --cinnabar-deep: #952e21;
   --gold: #ead6a6;
+  --pine-ink: #1d3a31;
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0.9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
   --wood: #2a2019;
   --serif: 'Noto Serif TC', 'Songti TC', 'Source Han Serif TC', 'Noto Serif CJK TC', serif;
   --sans: -apple-system, BlinkMacSystemFont, 'PingFang TC', 'Noto Sans TC', 'Microsoft JhengHei', 'Segoe UI',
@@ -24,8 +26,7 @@
   --shadow-lg: 0 30px 70px -24px rgb(24 30 27 / 0.42), 0 4px 14px rgb(24 30 27 / 0.08);
   --track-display: 0.08em;
   --track-title: 0.14em;
-  --gutter: 40px;
-  --transport-h: 104px;
+  --gutter: 18px;
   color-scheme: light;
 }
 .lang-en {
@@ -49,6 +50,7 @@ html:has(dialog[open]) {
   overflow: hidden;
 }
 body {
+  overflow-x: hidden;
   font: 400 15px/1.5 var(--sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -117,184 +119,920 @@ img {
 
 .studio-shell {
   position: relative;
-  max-width: 1280px;
+  /* The guzheng runs off the right edge on phones; never let that widen the page. */
+  overflow-x: clip;
+  max-width: 1600px;
   margin: 0 auto;
-  min-height: 100svh;
+  height: 100dvh;
+  min-height: 640px;
   display: flex;
   flex-direction: column;
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left);
 }
 
 .site-header {
-  height: 76px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: 20px;
   padding: 0 var(--gutter);
-  border-bottom: 1px solid var(--line);
   flex-shrink: 0;
   position: relative;
 }
 .brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   border-radius: 6px;
 }
 .seal {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   object-fit: contain;
 }
 .brand-name {
   font-family: var(--serif);
   font-weight: 600;
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   white-space: nowrap;
-  margin-right: -0.16em;
+  margin-right: -0.24em;
+  color: var(--pine-ink);
 }
 .desktop-nav {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  bottom: -1px;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 40px;
-}
-.desktop-nav button {
-  position: relative;
-  font-family: var(--serif);
-  font-size: 16px;
-  font-weight: 500;
-  letter-spacing: var(--track-display);
-  color: var(--ink-2);
-  padding: 0 2px;
-  transition: color 0.2s;
-}
-.desktop-nav button[aria-current='page'] {
-  color: var(--cinnabar);
-}
-.desktop-nav button::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 2px;
-  background: var(--cinnabar);
-  transform: scaleX(0);
-  transition: transform 0.3s var(--ease);
-}
-.desktop-nav button[aria-current='page']::after {
-  transform: scaleX(1);
+  display: none;
 }
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+  margin-right: -8px;
 }
 .lang-button {
-  height: 34px;
-  min-width: 42px;
-  padding: 0 11px;
-  margin-right: 6px;
-  border: 1px solid var(--line-strong);
-  border-radius: 999px;
-  font-size: 13px;
+  min-width: 44px;
+  height: 44px;
+  padding: 0 8px;
+  border-radius: 10px;
+  font-family: var(--serif);
+  font-size: 18px;
   font-weight: 600;
-  letter-spacing: 0.08em;
-  color: var(--ink-2);
+  letter-spacing: 0.02em;
+  color: var(--pine-ink);
   transition:
     background 0.2s,
-    border-color 0.2s,
     color 0.2s;
 }
-.lang-button:lang(zh-Hant) {
-  font-family: var(--serif);
-  font-size: 15px;
-  letter-spacing: 0;
+.header-actions .header-divider,
+.header-actions .header-mute {
+  display: none;
 }
 .icon-button {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  color: var(--ink-2);
+  color: var(--pine-ink);
   transition:
     background 0.2s,
     color 0.2s;
 }
-.mobile-menu {
-  display: none;
-}
 
-/* ───────────── Workspace ───────────── */
+/* ───────────── Stage: one instrument per page on phones, the whole band on desktop ───────────── */
 
-.workspace {
+.stage-shell {
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  padding: 26px var(--gutter) 0;
 }
-.instrument-heading {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+.stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+.stage-divider {
+  display: none;
+}
+.panel {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  animation: panel-in 0.42s var(--ease) both;
+}
+.show-guzheng .panel-drums,
+.show-percussion .panel-zheng {
+  display: none;
+}
+.panel-head {
+  display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: 10px;
+  padding: 2px var(--gutter) 16px;
+  touch-action: pan-y;
+  flex-shrink: 0;
 }
-.instrument-title {
+.panel-title {
   display: flex;
   align-items: baseline;
-  gap: 14px;
-  min-width: 0;
-}
-.instrument-title h1 {
+  gap: 12px;
+  margin-right: 6px;
   font-family: var(--serif);
-  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.05;
+  color: var(--pine-ink);
+  white-space: nowrap;
+}
+.panel-title span {
+  font-size: 44px;
+  letter-spacing: 0.06em;
+}
+.lang-en .panel-title span {
+  font-size: 40px;
+  letter-spacing: -0.005em;
+}
+.panel-title small {
+  display: none;
+  font-size: 26px;
   font-weight: 600;
-  line-height: 1.15;
-  letter-spacing: var(--track-title);
-  white-space: nowrap;
+  letter-spacing: 0.04em;
 }
-.instrument-title > span {
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-  white-space: nowrap;
+.panel-title small:lang(en) {
+  font-size: 22px;
+  letter-spacing: 0;
 }
-.instrument-title > span:lang(zh-Hant) {
-  font-family: var(--serif);
-  font-size: 15px;
-  letter-spacing: 0.2em;
-}
-.focus-button {
-  justify-self: end;
+.key-chip {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  height: 38px;
-  padding: 0 14px;
-  border: 1px solid var(--line-strong);
+  height: 40px;
+  padding: 0 14px 0 18px;
   border-radius: 999px;
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  color: var(--ink-2);
+  box-shadow: inset 0 0 0 1.5px #b8b6aa;
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--pine-ink);
+  white-space: nowrap;
   transition:
     background 0.2s,
-    border-color 0.2s,
-    color 0.2s;
+    box-shadow 0.2s;
+}
+.lang-en .key-chip {
+  font-family: var(--sans);
+  letter-spacing: 0;
+}
+.key-chip svg {
+  opacity: 0.75;
+}
+.page-dots {
+  display: flex;
+  margin-left: auto;
+  margin-right: -10px;
+}
+.page-dots button {
+  width: 30px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+}
+.page-dots i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px #8d9189;
+  transition:
+    background 0.25s,
+    box-shadow 0.25s;
+}
+.page-dots [aria-current] i {
+  background: var(--pine-ink);
+  box-shadow: none;
+}
+.panel-body {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  padding: 0 var(--gutter);
+}
+
+/* ───────────── Guzheng, drawn as the instrument itself ───────────── */
+
+.zheng {
+  --cap: 60px;
+  --tail: 30px;
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  /* On phones the far end runs off the screen, like the long instrument it is. */
+  margin-right: calc(-1 * var(--gutter) - var(--tail) - 2px);
+  border-radius: 30px / 50%;
+  background:
+    linear-gradient(180deg, rgb(255 226 196 / 0.07), transparent 22%, transparent 82%, rgb(0 0 0 / 0.2)),
+    linear-gradient(rgb(150 78 44 / 0.5), rgb(150 78 44 / 0.5)),
+    #3a2419 url('/images/walnut.webp') center / cover;
+  background-blend-mode: normal, soft-light, normal;
+  box-shadow:
+    inset 0 1px 0 rgb(255 228 196 / 0.14),
+    inset 0 -2px 0 rgb(0 0 0 / 0.28),
+    0 9px 0 -4px #2b1a11,
+    0 30px 40px -22px rgb(58 34 20 / 0.6),
+    0 6px 14px -6px rgb(58 34 20 / 0.25);
+  overflow: hidden;
+}
+.zheng-cap,
+.zheng-tail {
+  position: relative;
+  flex: none;
+  background:
+    linear-gradient(90deg, rgb(0 0 0 / 0.28), rgb(255 214 170 / 0.06) 55%, rgb(0 0 0 / 0.3)),
+    linear-gradient(rgb(128 58 34 / 0.55), rgb(128 58 34 / 0.55)),
+    #3a2016 url('/images/walnut-v.webp') center / cover;
+  background-blend-mode: normal, soft-light, normal;
+}
+.zheng-cap {
+  width: var(--cap);
+  display: grid;
+  place-items: center;
+  box-shadow:
+    inset -2px 0 0 #1f120b,
+    inset -4px 0 0 rgb(214 168 116 / 0.28),
+    6px 0 12px -6px rgb(0 0 0 / 0.55);
+  z-index: 2;
+}
+.zheng-tail {
+  width: var(--tail);
+  box-shadow:
+    inset 2px 0 0 #1f120b,
+    inset 4px 0 0 rgb(214 168 116 / 0.24),
+    -6px 0 12px -6px rgb(0 0 0 / 0.55);
+}
+.register {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.register-stop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.register-stop > i {
+  width: 1px;
+  height: clamp(18px, 6vh, 44px);
+  margin: 6px 0;
+  background: rgb(236 222 196 / 0.45);
+}
+.register button {
+  width: 42px;
+  height: 44px;
+  border-radius: 12px;
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 600;
+  color: #eadcc2;
+  transition:
+    background 0.25s,
+    color 0.25s,
+    box-shadow 0.25s;
+}
+.lang-en .register button {
+  width: 48px;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+}
+.register button[aria-pressed='true'] {
+  background: #2c5a47;
+  color: #f4ecdc;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.12),
+    0 2px 6px rgb(0 0 0 / 0.35);
+}
+
+.zheng-strings {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 0;
+}
+.instrument {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: none;
+}
+.string {
+  position: relative;
+  flex: 1;
+  min-height: 18px;
+  display: grid;
+  grid-template-columns: 26px 34px 1fr;
+  align-items: center;
+  color: #ecdfc6;
+}
+.string:disabled {
+  cursor: default;
+}
+.peg {
+  position: relative;
+  justify-self: end;
+  width: 8px;
+  height: 8px;
+  margin-right: 3px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #4a2c16 30%, #24150b 75%);
+  box-shadow:
+    0 0 0 1.75px #d1a54f,
+    0 1px 2px 1.5px rgb(0 0 0 / 0.4);
+}
+.peg::after {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 3.25px;
+  width: 7px;
+  height: 1.5px;
+  background: #cfae6c;
+}
+.note-name {
+  padding-left: 8px;
+  font-family: var(--serif);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: rgb(240 228 206 / 0.9);
+}
+.string-track {
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  margin-left: 4px;
+}
+.string-line {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: var(--gauge, 1px);
+  border-radius: 1px;
+  background: linear-gradient(to bottom, #fbf2de, #c7ae80);
+  box-shadow: 0 1px 1.5px 0 rgb(0 0 0 / 0.6);
+  transform-origin: center;
+}
+.string-line::after {
+  /* A generous invisible hit line so fast swipes never slip between strings. */
+  content: '';
+  position: absolute;
+  inset: -10px 0;
+}
+.green-string .string-line {
+  /* On a real guzheng every "5" (sol) string is green. */
+  background: linear-gradient(to bottom, #b9e0cf, #4f8f78);
+}
+.green-string .note-name {
+  color: #c6e2cf;
+}
+.bridge {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: var(--bridge);
+  width: 18px;
+  height: 17px;
+  margin-top: -3px;
+  transform: translateX(-50%);
+  background: linear-gradient(100deg, #fffaf0 0%, #eee4cf 42%, #cdbb96 72%, #a9946e 100%);
+  clip-path: polygon(36% 0, 64% 0, 100% 100%, 70% 100%, 50% 56%, 30% 100%, 0 100%);
+  filter: drop-shadow(2px 3px 1.5px rgb(0 0 0 / 0.5));
+  pointer-events: none;
+}
+.scale-number,
+.key-label {
+  display: none;
+}
+.string.sounding .string-line {
+  background: var(--gold);
+  box-shadow: 0 0 8px rgb(243 222 170 / 0.8);
+}
+
+/* ───────────── Percussion: mineral pigment pads ───────────── */
+
+.drums {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.pads {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1.1fr 1fr 1fr 1fr;
+  gap: 8px;
+}
+.pads.bank-two {
+  grid-template-rows: repeat(4, 1fr);
+}
+.pad {
+  --pig: #b3452f;
+  --pad-ink: #f7f0e1;
+  position: relative;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border-radius: 12px;
+  background: var(--pig);
+  color: var(--pad-ink);
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.14),
+    inset 0 -1px 0 rgb(0 0 0 / 0.12),
+    0 1px 2px rgb(40 28 18 / 0.14),
+    0 8px 18px -12px rgb(40 28 18 / 0.45);
+}
+.pad::after {
+  /* Mineral paper grain */
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--grain);
+  background-size: 180px;
+  opacity: 0.55;
+  mix-blend-mode: overlay;
+}
+.pad.lead-pad {
+  grid-column: 1 / -1;
+}
+.pad[data-pigment='cinnabar'] {
+  --pig: #b3452f;
+}
+.pad[data-pigment='vermilion'] {
+  --pig: #a84230;
+}
+.pad[data-pigment='cinnabar-deep'] {
+  --pig: #7e2f22;
+}
+.pad[data-pigment='pine'] {
+  --pig: #2d5642;
+}
+.pad[data-pigment='pine-deep'] {
+  --pig: #1f3d2f;
+}
+.pad[data-pigment='azurite'] {
+  --pig: #3e5c85;
+}
+.pad[data-pigment='azurite-deep'] {
+  --pig: #2b4264;
+}
+.pad[data-pigment='ink'] {
+  --pig: #3b3b3a;
+}
+.pad[data-pigment='ink-deep'] {
+  --pig: #262625;
+}
+.pad[data-pigment='gamboge'] {
+  --pig: #c8963d;
+  --pad-ink: #2a2015;
+}
+.pad[data-pigment='ochre'] {
+  --pig: #d4a347;
+  --pad-ink: #2a2015;
+}
+.pad-name {
+  position: relative;
+  z-index: 1;
+  font-family: var(--serif);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: 0.06em;
+  margin-right: -0.06em;
+  text-align: center;
+}
+.lead-pad .pad-name {
+  font-size: 50px;
+  letter-spacing: 0.1em;
+  margin-right: -0.1em;
+}
+.bank-two .pad-name {
+  font-size: 26px;
+  letter-spacing: 0.04em;
+}
+.pad-en {
+  position: relative;
+  z-index: 1;
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  opacity: 0.92;
+  text-align: center;
+  padding: 0 6px;
+}
+.bank-two .pad-en {
+  font-size: 13px;
+}
+.pad-key {
+  display: none;
+}
+.pad.sounding {
+  filter: brightness(1.14) saturate(1.05);
+  box-shadow:
+    inset 0 0 0 3px rgb(255 247 228 / 0.55),
+    0 1px 2px rgb(40 28 18 / 0.14);
+}
+.bank-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  padding-top: 4px;
+}
+.bank-nav button {
+  flex: 1;
+  max-width: 190px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 999px;
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--pine-ink);
+  transition:
+    opacity 0.2s,
+    background 0.2s;
+}
+.lang-en .bank-nav button {
+  letter-spacing: 0.01em;
+}
+.bank-nav button:disabled {
+  opacity: 0.34;
+}
+.bank-nav > i {
+  width: 1px;
+  height: 26px;
+  background: var(--line-strong);
+}
+
+/* ───────────── Floating pill ───────────── */
+
+.pill-dock {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  padding: 16px var(--gutter) calc(16px + env(safe-area-inset-bottom));
+}
+.pill {
+  width: min(100%, 520px);
+  height: 64px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px 0 6px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #24503f, #1c4335);
+  color: #f4ecdc;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.1),
+    inset 0 -1px 0 rgb(0 0 0 / 0.2),
+    0 16px 30px -14px rgb(18 46 36 / 0.7),
+    0 3px 8px rgb(18 46 36 / 0.18);
+}
+.pill-record {
+  flex: none;
+  height: 50px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px 0 16px;
+  border-radius: 999px;
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  transition: background 0.2s;
+}
+.lang-en .pill-record {
+  letter-spacing: 0.01em;
+}
+.record-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #e2533f;
+  box-shadow: 0 0 0 3px rgb(226 83 63 / 0.18);
+  transition: border-radius 0.2s;
+}
+.pill-record.recording {
+  color: #ffdcd3;
+  box-shadow: inset 0 0 0 1.5px rgb(240 120 100 / 0.75);
+}
+.pill-record.recording .record-dot {
+  border-radius: 3px;
+  animation: record-pulse 1.2s ease-in-out infinite;
+}
+.pill-divider {
+  flex: none;
+  width: 1px;
+  height: 36px;
+  background: rgb(244 236 220 / 0.2);
+}
+.pill-player {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 6px 0 10px;
+}
+.pill-play {
+  position: relative;
+  flex: none;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #f4ecdc;
+}
+.pill-play .ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+.ring-track,
+.ring-fill {
+  fill: none;
+  stroke-width: 2.2;
+}
+.ring-track {
+  stroke: rgb(244 236 220 / 0.24);
+}
+.ring-fill {
+  stroke: #f4ecdc;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.12s linear;
+}
+.pill-play .lucide-play {
+  margin-left: 3px;
+}
+.pill-song {
+  container-type: inline-size;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  padding: 6px 4px;
+  border-radius: 10px;
+  text-align: left;
+  color: #f4ecdc;
+}
+.pill-line {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  max-width: 100%;
+  min-width: 0;
+}
+.pill-bpm-top {
+  display: none;
+  flex: none;
+}
+.lang-zh .pill-bpm-top {
+  display: inline;
+}
+.lang-zh .pill-bpm-time {
+  display: none;
+}
+.pill-title {
+  min-width: 0;
+  max-width: 100%;
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lang-en .pill-title {
+  font-size: 16px;
+  letter-spacing: 0;
+}
+.pill-sub {
+  display: none;
+  align-items: baseline;
+  gap: 18px;
+  font-family: var(--serif);
+  font-size: 14px;
+}
+.pill-sub > span {
+  opacity: 0.8;
+}
+.pill-time {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  opacity: 0.86;
+}
+.pill-bpm {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  opacity: 0.8;
+}
+.pill-sub .pill-bpm {
+  display: inline;
+}
+/* When the song block gets narrow (Chinese label, or mid-recording), BPM steps aside. */
+@container (max-width: 140px) {
+  .pill-time .pill-bpm {
+    display: none;
+  }
+}
+@container (max-width: 100px) {
+  .pill-line .pill-bpm-top {
+    display: none;
+  }
+}
+.pill-gear {
+  flex: none;
+  width: 50px;
+  height: 50px;
+  display: grid;
+  place-items: center;
+  margin-left: 4px;
+  border-radius: 50%;
+  color: #f4ecdc;
+  transition: background 0.2s;
+}
+
+/* ───────────── Now playing (songs sheet) ───────────── */
+
+.now-playing {
+  margin: calc(-1 * var(--bpt)) calc(-1 * var(--bpx)) 24px;
+  padding: 22px var(--bpx) 18px;
+  background: linear-gradient(to bottom, var(--paper-deep), var(--paper));
+  border-bottom: 1px solid var(--line);
+}
+.np-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.song-mark {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--pine);
+  color: var(--paper);
+  font-family: var(--serif);
+  font-size: 24px;
+  font-weight: 600;
+}
+.np-title {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.np-title small {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.lang-zh .np-title small {
+  letter-spacing: 0.08em;
+}
+.np-title strong {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: var(--track-display);
+  overflow-wrap: anywhere;
+}
+.np-title span {
+  font-size: 13px;
+  color: var(--ink-3);
+}
+.np-timeline {
+  margin-top: 14px;
+}
+.np-times {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+}
+.np-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+.np-controls .icon-button {
+  color: var(--ink-2);
+}
+.np-controls .icon-button.selected {
+  color: var(--pine);
+  background: var(--pine-tint);
+}
+.np-play {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  margin: 0 6px;
+  border-radius: 50%;
+  background: var(--pine);
+  color: var(--paper);
+  box-shadow: 0 10px 22px -10px rgb(24 56 48 / 0.7);
+  transition:
+    background 0.2s,
+    transform 0.15s var(--ease);
+}
+.np-play:active {
+  transform: scale(0.95);
+}
+.np-play .lucide-play {
+  margin-left: 3px;
+}
+.np-tempo {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 44px;
+  padding: 0 10px;
+  border-radius: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.np-tempo strong {
+  font-size: 16px;
+  font-weight: 600;
+}
+.np-tempo span {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+}
+
+/* ───────────── Focus mode ───────────── */
+
+.focus-mode .site-header {
+  display: none;
+}
+.focus-mode .panel-head {
+  padding-top: 14px;
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
 }
 
 /* Segmented control with a sliding thumb */
@@ -376,157 +1114,6 @@ img {
   letter-spacing: 0.08em;
 }
 
-/* ───────────── Guzheng ───────────── */
-
-.board-wrap {
-  position: relative;
-  flex: 1;
-  min-height: 380px;
-  display: flex;
-  flex-direction: column;
-}
-.instrument {
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-touch-callout: none;
-  touch-action: none;
-}
-.soundboard {
-  --label-w: 46px;
-  --end-w: 40px;
-  position: relative;
-  flex: 1;
-  min-height: 380px;
-  display: flex;
-  border-radius: 16px;
-  overflow: hidden;
-  padding: 14px 0;
-  background: var(--wood) url('/images/walnut.webp') center / cover;
-  box-shadow:
-    inset 0 0 0 1px rgb(0 0 0 / 0.45),
-    inset 0 1px 0 rgb(255 240 215 / 0.07),
-    0 22px 44px -28px rgb(45 28 14 / 0.7),
-    0 2px 6px rgb(45 28 14 / 0.12);
-}
-.soundboard::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(120% 70% at 30% -10%, rgb(255 232 196 / 0.1), transparent 60%),
-    linear-gradient(to bottom, rgb(0 0 0 / 0.14), transparent 10%, transparent 88%, rgb(0 0 0 / 0.22));
-}
-.strings {
-  position: relative;
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-}
-.ridge {
-  position: absolute;
-  top: -14px;
-  bottom: -14px;
-  width: 8px;
-  pointer-events: none;
-  border-radius: 2px;
-  background: linear-gradient(90deg, #4a3624 0%, #a88458 38%, #caa877 52%, #7a5a39 100%);
-  box-shadow:
-    2px 0 6px rgb(0 0 0 / 0.45),
-    -1px 0 2px rgb(0 0 0 / 0.3);
-  opacity: 0.92;
-}
-.ridge-tail {
-  left: calc(var(--label-w) + 2px);
-  width: 6px;
-}
-.ridge-head {
-  right: calc(var(--end-w) - 4px);
-  width: 10px;
-}
-.string {
-  position: relative;
-  flex: 1;
-  min-height: 24px;
-  display: grid;
-  grid-template-columns: var(--label-w) 1fr var(--end-w);
-  align-items: center;
-  border-radius: 0;
-  color: #e6dac4;
-}
-.string:disabled {
-  cursor: default;
-}
-.note-name {
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-align: center;
-  font-variant-numeric: tabular-nums;
-  color: rgb(236 224 201 / 0.78);
-}
-.string-track {
-  position: relative;
-  align-self: stretch;
-  display: flex;
-  align-items: center;
-  margin: 0 2px 0 8px;
-}
-.string-line {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  height: var(--gauge, 1px);
-  border-radius: 1px;
-  background: linear-gradient(to bottom, #f6ebd0, #b89d70);
-  box-shadow: 0 1px 1px 0 rgb(0 0 0 / 0.55);
-  transform-origin: center;
-}
-.string-line::after {
-  /* A generous invisible hit line so fast swipes never slip between strings. */
-  content: '';
-  position: absolute;
-  inset: -10px 0;
-}
-.green-string .string-line {
-  /* On a real guzheng every "5" (sol) string is green. */
-  background: linear-gradient(to bottom, #d3e6c8, #7f9f73);
-}
-.green-string .note-name {
-  color: #b8d3a9;
-}
-.bridge {
-  position: absolute;
-  z-index: 2;
-  top: 50%;
-  left: var(--bridge);
-  width: 15px;
-  height: 13px;
-  margin-top: -2px;
-  transform: translateX(-50%);
-  background: linear-gradient(to bottom, #fbf4e3, #dccda9 60%, #b8a47c);
-  clip-path: polygon(40% 0, 60% 0, 100% 100%, 70% 100%, 50% 58%, 30% 100%, 0 100%);
-  filter: drop-shadow(0 2px 1px rgb(0 0 0 / 0.5));
-  pointer-events: none;
-}
-.scale-number {
-  font-family: var(--serif);
-  font-size: 12px;
-  text-align: center;
-  color: rgb(214 190 146 / 0.8);
-}
-.key-label {
-  display: none;
-}
-.string.sounding .string-line {
-  background: var(--gold);
-  box-shadow: 0 0 8px rgb(243 222 170 / 0.8);
-}
-.board-signature {
-  display: none;
-}
-
 /* Enable overlay */
 .enable-overlay {
   position: absolute;
@@ -534,10 +1121,10 @@ img {
   inset: 0;
   display: grid;
   place-items: center;
-  border-radius: 16px;
-  background: rgb(18 12 7 / 0.34);
-  -webkit-backdrop-filter: blur(1.5px);
-  backdrop-filter: blur(1.5px);
+  background: rgb(243 239 230 / 0.42);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  animation: fade-in 0.3s ease both;
 }
 .enable-button {
   width: min(320px, 86%);
@@ -588,159 +1175,6 @@ img {
   color: var(--ink-3);
 }
 
-/* ───────────── Percussion ───────────── */
-
-.percussion-board {
-  flex: 1;
-  min-height: 380px;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-  gap: 14px;
-}
-.drum-pad {
-  position: relative;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border-radius: 16px;
-  background: var(--surface);
-  box-shadow:
-    inset 0 0 0 1px var(--line),
-    0 1px 0 rgb(255 255 255 / 0.7),
-    0 10px 24px -20px rgb(30 35 32 / 0.5);
-  overflow: hidden;
-}
-.drum-pad::before {
-  /* Pads are marked by material: drumhead with tacks, bronze rings, or wooden slats. */
-  content: '';
-  position: absolute;
-  width: min(58%, 140px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  pointer-events: none;
-}
-.drum-pad[data-material='skin']::before {
-  border: 2px dotted rgb(36 74 64 / 0.16);
-  box-shadow:
-    inset 0 0 0 9px rgb(36 74 64 / 0.035),
-    0 0 0 6px rgb(36 74 64 / 0.025);
-}
-.drum-pad[data-material='metal']::before {
-  border: 1px solid rgb(161 128 70 / 0.24);
-  box-shadow:
-    inset 0 0 0 7px rgb(193 146 91 / 0.05),
-    inset 0 0 0 8px rgb(161 128 70 / 0.14),
-    inset 0 0 0 20px rgb(193 146 91 / 0.035);
-}
-.drum-pad[data-material='wood']::before {
-  /* Two hardwood slats bracketing the name, like a pair of clappers. */
-  width: min(64%, 150px);
-  aspect-ratio: 1.25;
-  border-radius: 0;
-  background:
-    linear-gradient(rgb(122 90 57 / 0.13), rgb(122 90 57 / 0.13)) left / 9px 100% no-repeat,
-    linear-gradient(rgb(122 90 57 / 0.13), rgb(122 90 57 / 0.13)) right / 9px 100% no-repeat;
-}
-.drum-pad.lead-pad {
-  grid-row: span 2;
-  background: #eef0e7;
-}
-.drum-pad.lead-pad::before {
-  width: min(68%, 220px);
-}
-.pad-index {
-  position: absolute;
-  top: 14px;
-  left: 16px;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-3);
-}
-.pad-name {
-  position: relative;
-  font-family: var(--serif);
-  font-size: 32px;
-  font-weight: 600;
-  line-height: 1.1;
-  letter-spacing: 0.08em;
-  margin-right: -0.08em;
-  text-align: center;
-}
-.lead-pad .pad-name {
-  font-size: 50px;
-}
-.drum-bank .pad-name {
-  font-size: 24px;
-}
-.pad-english {
-  position: relative;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  color: var(--ink-3);
-  text-align: center;
-  padding: 0 8px;
-}
-.drum-pad.sounding {
-  background: var(--pine);
-  color: var(--paper);
-  box-shadow:
-    inset 0 0 0 1px var(--pine-deep),
-    inset 0 0 0 3px rgb(234 214 166 / 0.35);
-}
-.drum-pad.sounding .pad-index,
-.drum-pad.sounding .pad-english {
-  color: rgb(243 239 230 / 0.8);
-}
-.drum-pad.sounding::before {
-  border-color: rgb(234 214 166 / 0.4);
-  opacity: 0.8;
-}
-
-/* ───────────── Options + performance ───────────── */
-
-.instrument-options {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  min-height: 56px;
-  font-size: 13px;
-  color: var(--ink-3);
-}
-.playing-hint {
-  letter-spacing: 0.04em;
-}
-.bank-label {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--ink-2);
-}
-.bank-label > span {
-  margin-right: 4px;
-}
-.bank-label i {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--line-strong);
-  transition:
-    background 0.2s,
-    transform 0.2s;
-}
-.bank-label i.on {
-  background: var(--pine);
-  transform: scale(1.2);
-}
 .text-button {
   display: inline-flex;
   align-items: center;
@@ -755,76 +1189,6 @@ img {
 .text-button:disabled {
   color: var(--ink-3);
   opacity: 0.6;
-}
-.bank-nav {
-  color: var(--ink-2);
-  padding: 0 4px;
-}
-
-.performance-controls {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  min-height: 64px;
-  padding-bottom: 10px;
-}
-.record-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 44px;
-  padding: 0 16px 0 12px;
-  margin-left: -12px;
-  border-radius: 999px;
-  font-family: var(--serif);
-  font-size: 18px;
-  font-weight: 600;
-  letter-spacing: var(--track-display);
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-  transition: background 0.2s;
-}
-.record-dot {
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-  background: var(--cinnabar);
-  box-shadow: 0 0 0 3px rgb(178 58 42 / 0.14);
-  transition: border-radius 0.2s;
-}
-.record-button.recording {
-  color: var(--cinnabar);
-  background: rgb(178 58 42 / 0.08);
-}
-.recording .record-dot {
-  border-radius: 2px;
-  animation: record-pulse 1.2s ease-in-out infinite;
-}
-.volume-control {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  width: 280px;
-  color: var(--ink-2);
-}
-.tuning-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  min-height: 44px;
-  padding: 0 12px;
-  margin-right: -12px;
-  border-radius: 999px;
-  font-family: var(--serif);
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: var(--track-display);
-  color: var(--ink);
-  transition: background 0.2s;
-}
-.tuning-button svg {
-  color: var(--ink-3);
 }
 
 /* Range sliders */
@@ -913,150 +1277,6 @@ img {
 }
 .switch[aria-checked='true'] .switch-thumb {
   transform: translateX(20px);
-}
-
-/* ───────────── Transport ───────────── */
-
-.transport {
-  display: grid;
-  grid-template-columns: minmax(220px, 320px) auto 1fr auto auto;
-  align-items: center;
-  gap: 24px;
-  margin: 0 var(--gutter);
-  padding: 22px 0 26px;
-  border-top: 1px solid var(--line);
-  min-height: var(--transport-h);
-  flex-shrink: 0;
-}
-.song-summary {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  min-width: 0;
-  text-align: left;
-  border-radius: 12px;
-  padding: 4px 8px 4px 4px;
-  margin-left: -4px;
-  transition: background 0.2s;
-}
-.song-mark {
-  position: relative;
-  width: 46px;
-  height: 46px;
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
-  border-radius: 12px;
-  background: var(--pine);
-  color: var(--paper);
-  font-family: var(--serif);
-  font-size: 21px;
-  font-weight: 600;
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
-}
-.song-mark.is-playing::after {
-  content: '';
-  position: absolute;
-  inset: -4px;
-  border-radius: 15px;
-  border: 1.5px solid var(--pine);
-  opacity: 0;
-  animation: breathe 2.4s ease-in-out infinite;
-}
-.song-text {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.song-text strong {
-  font-family: var(--serif);
-  font-size: 19px;
-  font-weight: 600;
-  line-height: 1.25;
-  letter-spacing: var(--track-display);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.song-text small {
-  font-size: 12px;
-  color: var(--ink-3);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.play-controls {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.play-button {
-  width: 50px;
-  height: 50px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--pine);
-  color: var(--paper);
-  box-shadow:
-    0 1px 2px rgb(24 56 48 / 0.25),
-    0 10px 22px -10px rgb(24 56 48 / 0.6);
-  transition:
-    background 0.2s,
-    transform 0.15s var(--ease);
-}
-.play-button:active {
-  transform: scale(0.95);
-}
-.play-button svg[class*='play'] {
-  margin-left: 2px;
-}
-.timeline {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  min-width: 0;
-}
-.timeline time {
-  font-size: 12px;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-3);
-  min-width: 30px;
-}
-.timeline time:last-child {
-  text-align: right;
-}
-.loop.selected {
-  color: var(--pine);
-  background: var(--pine-tint);
-}
-.tempo-button {
-  display: inline-grid;
-  place-items: center;
-  min-height: 44px;
-  padding: 0 10px;
-  margin-right: -10px;
-  border-radius: 10px;
-  white-space: nowrap;
-  transition: background 0.2s;
-}
-.tempo-value {
-  display: flex;
-  align-items: baseline;
-  gap: 4px;
-}
-.tempo-button strong {
-  font-size: 16px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-.tempo-button span {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  color: var(--ink-3);
 }
 
 /* ───────────── Overlays: sheet + dialog ───────────── */
@@ -1784,43 +2004,65 @@ dialog.overlay-dialog {
   color: rgb(243 239 230 / 0.8);
 }
 
-/* ───────────── Focus mode ───────────── */
+@media (max-width: 720px) {
+  dialog.overlay-sheet {
+    inset: auto 0 0 0;
+    width: 100%;
+    height: auto;
+    max-height: calc(100dvh - 44px - env(safe-area-inset-top));
+  }
+  .overlay-sheet .overlay-panel {
+    height: auto;
+    max-height: calc(100dvh - 44px - env(safe-area-inset-top));
+    border-left: 0;
+    border-radius: 22px 22px 0 0;
+    animation-name: sheet-in-up;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .overlay-sheet.closing .overlay-panel {
+    animation-name: sheet-out-down;
+  }
+  .overlay-sheet .overlay-panel.dragging {
+    animation: none;
+    transition: none;
+  }
+  .overlay-sheet .overlay-panel:not(.dragging) {
+    transition: transform 0.3s var(--ease);
+  }
+  .overlay-sheet .overlay-header {
+    padding: 30px 16px 18px 24px;
+    touch-action: none;
+  }
+  .grabber {
+    display: block;
+    position: absolute;
+    top: 9px;
+    left: 50%;
+    width: 38px;
+    height: 5px;
+    margin-left: -19px;
+    border-radius: 3px;
+    background: var(--line-strong);
+  }
+  .overlay-header h2 {
+    font-size: 26px;
+  }
+  .overlay-body {
+    --bpt: 18px;
+    --bpx: 24px;
+    --bpb: 30px;
+  }
+}
 
-.focus-mode {
-  max-width: none;
-  height: 100dvh;
-  min-height: 0;
-}
-.focus-mode .site-header,
-.focus-mode .transport,
-.focus-mode .playing-hint {
-  display: none;
-}
-.focus-mode .workspace {
-  padding-top: 16px;
-  padding-bottom: 6px;
-}
-.focus-mode .instrument-heading {
-  margin-bottom: 14px;
-}
-.focus-mode .instrument-title h1 {
-  font-size: 26px;
-}
-.focus-mode .board-wrap,
-.focus-mode .soundboard,
-.focus-mode .percussion-board {
-  min-height: 0;
-}
-.focus-mode .instrument-options {
-  justify-content: flex-end;
-  min-height: 46px;
-}
-.focus-mode .instrument-options:has(.bank-label) {
-  justify-content: space-between;
-}
-.focus-mode .performance-controls {
-  min-height: 56px;
-  padding-bottom: 4px;
+@media (max-width: 600px) {
+  .overlay-dialog .overlay-header {
+    padding: 24px 16px 2px 22px;
+  }
+  .overlay-dialog .overlay-body {
+    --bpt: 16px;
+    --bpx: 22px;
+    --bpb: 22px;
+  }
 }
 
 /* ───────────── Keyframes ───────────── */
@@ -1909,624 +2151,749 @@ dialog.overlay-dialog {
   }
 }
 
-/* ───────────── Large screens ───────────── */
+/* ───────────── Tablets (portrait) ───────────── */
 
-@media (min-width: 1000px) {
+@media (min-width: 601px) {
+  :root {
+    --gutter: 40px;
+  }
+  .site-header {
+    height: 76px;
+  }
+  .panel-title span {
+    font-size: 58px;
+  }
+  .lang-en .panel-title span {
+    font-size: 52px;
+  }
+  .panel-title small {
+    display: inline;
+  }
+  .panel-head {
+    padding-bottom: 20px;
+  }
+  .zheng {
+    --cap: 72px;
+  }
+  .string {
+    grid-template-columns: 32px 40px 1fr;
+  }
+  .note-name {
+    font-size: 15px;
+  }
+  .pads {
+    gap: 12px;
+  }
+  .pad-name {
+    font-size: 58px;
+  }
+  .lead-pad .pad-name {
+    font-size: 70px;
+  }
+  .bank-two .pad-name {
+    font-size: 40px;
+  }
+  .pad-en {
+    font-size: 19px;
+  }
+  .bank-two .pad-en {
+    font-size: 16px;
+  }
+  .pill {
+    width: min(100%, 640px);
+    height: 72px;
+  }
+  .pill-title {
+    font-size: 19px;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 999px) and (orientation: portrait) {
+  .pads {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 1.2fr 1fr 1fr;
+  }
+  .pads.bank-two {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+  }
+}
+
+/* ───────────── Desktop: the whole band on one stage ───────────── */
+
+@media (min-width: 1000px) and (min-height: 560px) {
+  :root {
+    --gutter: 48px;
+  }
   body::before {
     content: '';
     position: fixed;
     left: 0;
     right: 0;
     bottom: 0;
-    height: 34vh;
+    height: 30vh;
     background: url('/images/ink-mountains.webp') center bottom / cover no-repeat;
-    opacity: 0.12;
+    opacity: 0.1;
     pointer-events: none;
     -webkit-mask-image: linear-gradient(to bottom, transparent, #000 55%);
     mask-image: linear-gradient(to bottom, transparent, #000 55%);
   }
-  .soundboard {
-    --end-w: 44px;
-    padding-right: 0;
+  .site-header {
+    height: 84px;
   }
-  .board-signature {
+  .seal {
+    width: 40px;
+    height: 40px;
+  }
+  .brand-name {
+    font-size: 17px;
+  }
+  .desktop-nav {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    transform: translateX(-50%);
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 22px;
-    width: 72px;
-    padding: 30px 0;
-    border-left: 1px solid rgb(188 161 119 / 0.18);
-    background: rgb(20 14 8 / 0.16);
-    flex-shrink: 0;
+    gap: 56px;
   }
-  .board-signature > span:first-child {
-    writing-mode: vertical-rl;
+  .desktop-nav button {
+    position: relative;
     font-family: var(--serif);
-    font-size: 28px;
-    font-weight: 600;
-    letter-spacing: 0.3em;
-    color: #c5a97a;
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: var(--track-display);
+    color: var(--pine-ink);
+    transition: color 0.2s;
   }
-  .board-signature i {
+  .desktop-nav button::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 20px;
+    height: 2px;
+    background: var(--cinnabar);
+    transform: scaleX(0);
+    transition: transform 0.3s var(--ease);
+  }
+  .desktop-nav button[aria-current='page'] {
+    color: var(--cinnabar);
+  }
+  .desktop-nav button[aria-current='page']::after {
+    transform: scaleX(1);
+  }
+  .header-actions {
+    gap: 8px;
+  }
+  .lang-button {
+    min-width: 40px;
+    height: 40px;
+    padding: 0 6px;
+    border-radius: 9px;
+    background: var(--pine);
+    color: #f4ecdc;
+    font-size: 17px;
+  }
+  .lang-button:lang(en) {
+    font-family: var(--sans);
+    font-size: 14px;
+    letter-spacing: 0.06em;
+  }
+  .header-actions .header-divider {
+    display: block;
     width: 1px;
-    height: 64px;
-    background: rgb(197 169 122 / 0.45);
+    height: 28px;
+    margin: 0 8px;
+    background: var(--line-strong);
   }
-  .signature-seal {
-    width: 26px;
-    height: 26px;
-    opacity: 0.9;
+  .header-actions .header-mute {
+    display: inline-flex;
+  }
+  .stage {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) 1px minmax(0, 1fr);
+    column-gap: 36px;
+    padding: 0 var(--gutter);
+  }
+  .show-guzheng .panel-drums,
+  .show-percussion .panel-zheng {
+    display: flex;
+  }
+  .panel {
+    animation: none;
+  }
+  .stage-divider {
+    display: block;
+    align-self: stretch;
+    margin: 8px 0 60px;
+    background: var(--line);
+  }
+  .panel-head {
+    padding: 6px 0 20px;
+    min-height: 92px;
+  }
+  .panel-title span,
+  .lang-en .panel-title span {
+    font-size: 60px;
+  }
+  .lang-en .panel-title span {
+    letter-spacing: -0.01em;
+  }
+  .panel-title small {
+    font-size: 30px;
+  }
+  .panel-title small:lang(en) {
+    font-size: 24px;
+  }
+  .key-chip {
+    height: 46px;
+    padding: 0 18px 0 22px;
+    font-size: 18px;
+  }
+  .page-dots {
+    display: none;
+  }
+  .panel-body {
+    padding: 0;
+  }
+  .zheng {
+    --cap: 76px;
+    --tail: 40px;
+    margin-right: 0;
+    border-radius: 40px / 50%;
+  }
+  .string {
+    min-height: 16px;
+  }
+  .pads {
+    grid-template-rows: 1.05fr 1fr 1fr 1fr;
+    gap: 10px;
+  }
+  .pad-name {
+    font-size: 48px;
+  }
+  .lead-pad .pad-name {
+    font-size: 56px;
+  }
+  .bank-two .pad-name {
+    font-size: 30px;
+  }
+  .pad-en {
+    font-size: 18px;
+  }
+  .bank-two .pad-en {
+    font-size: 14px;
+  }
+  .bank-nav {
+    min-height: 68px;
+    padding-top: 14px;
+    gap: 22px;
+  }
+  .bank-nav button {
+    max-width: 200px;
+    height: 48px;
+    box-shadow: inset 0 0 0 1.5px #b8b6aa;
+    font-family: var(--sans);
+    font-size: 16px;
+    letter-spacing: 0.02em;
+  }
+  .pill-dock {
+    padding: 18px var(--gutter) 26px;
+  }
+  .pill {
+    width: min(100%, 900px);
+    height: 84px;
+    padding: 0 16px 0 18px;
+  }
+  .pill-record {
+    padding: 0 30px 0 22px;
+    font-size: 19px;
+  }
+  .pill-record:lang(en),
+  .lang-en .pill-record {
+    font-family: var(--sans);
+    font-weight: 500;
+  }
+  .record-dot {
+    width: 16px;
+    height: 16px;
+  }
+  .pill-player {
+    gap: 16px;
+    padding: 0 20px 0 28px;
+  }
+  .pill-play {
+    width: 54px;
+    height: 54px;
+  }
+  .pill-gear {
+    width: 56px;
+    height: 56px;
+    margin: 0 8px 0 22px;
+  }
+  .focus-mode .panel-drums,
+  .focus-mode .stage-divider {
+    display: none;
+  }
+  .focus-mode .stage {
+    grid-template-columns: 1fr;
   }
 }
-@media (min-width: 1000px) and (hover: hover) and (pointer: fine) {
+@media (min-width: 1000px) and (min-height: 560px) and (hover: hover) and (pointer: fine) {
   .key-label {
     display: block;
     position: absolute;
-    right: calc(var(--end-w) + 22px);
+    right: 22px;
     top: 50%;
     transform: translateY(-50%);
+    z-index: 3;
     min-width: 18px;
     padding: 1px 4px;
     border-radius: 4px;
-    border: 1px solid rgb(230 218 196 / 0.25);
-    background: #2a1f17;
-    box-shadow: 0 0 0 3px #2a1f17;
-    z-index: 3;
+    border: 1px solid rgb(236 222 196 / 0.3);
+    background: #3b2419;
+    box-shadow: 0 0 0 3px #3b2419;
     font-size: 10px;
     font-weight: 600;
     line-height: 14px;
     text-align: center;
     text-transform: uppercase;
-    color: rgb(230 218 196 / 0.55);
+    color: rgb(236 222 196 / 0.7);
     opacity: 0;
     transition: opacity 0.2s;
   }
-  .soundboard:hover .key-label {
+  .zheng:hover .key-label {
     opacity: 1;
   }
-  .string .string-track {
-    margin-right: 14px;
+  .pad-key {
+    display: block;
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    z-index: 1;
+    font-size: 11px;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .pads:hover .pad-key {
+    opacity: 0.6;
   }
 }
-@media (min-width: 1000px) and (max-height: 860px) {
+
+
+/* Desktop sizing tuned against the accepted concept */
+@media (min-width: 1000px) and (min-height: 560px) {
   .site-header {
-    height: 68px;
+    height: 92px;
   }
-  .workspace {
-    padding-top: 18px;
+  .seal {
+    width: 46px;
+    height: 46px;
   }
-  .instrument-heading {
-    margin-bottom: 14px;
-  }
-  .instrument-title h1 {
-    font-size: 30px;
-  }
-  .board-wrap,
-  .soundboard,
-  .percussion-board {
-    min-height: 300px;
-  }
-  .string {
-    min-height: 19px;
-  }
-  .instrument-options {
-    min-height: 48px;
-  }
-  .performance-controls {
-    min-height: 56px;
-    padding-bottom: 6px;
-  }
-  .transport {
-    --transport-h: 88px;
-    padding: 16px 0 18px;
-  }
-}
-@media (min-width: 1000px) and (min-height: 1000px) {
-  .board-wrap,
-  .soundboard,
-  .percussion-board {
-    max-height: 640px;
-  }
-  .workspace {
-    justify-content: center;
-  }
-}
-
-/* ───────────── Tablets ───────────── */
-
-@media (max-width: 999px) {
-  :root {
-    --gutter: 28px;
-  }
-  .desktop-nav {
-    /* In the flow, so a long wordmark and the nav can never collide. */
-    position: static;
-    transform: none;
-    align-self: stretch;
-    margin: 0 auto -1px;
-    gap: 22px;
-  }
-  .desktop-nav button {
-    font-size: 14px;
+  .brand {
+    gap: 18px;
   }
   .brand-name {
-    font-size: 15px;
-    letter-spacing: 0.14em;
+    font-size: 20px;
+    letter-spacing: 0.28em;
   }
-  .instrument-title > span {
-    display: none;
+  .desktop-nav {
+    gap: 76px;
   }
-  .transport {
-    grid-template-columns: minmax(180px, 270px) auto 1fr auto auto;
+  .desktop-nav button {
+    font-size: 19px;
+  }
+  .desktop-nav button::after {
+    bottom: 24px;
+  }
+  .lang-button {
+    min-width: 44px;
+    height: 44px;
+    font-size: 19px;
+  }
+  .header-actions .icon-button {
+    width: 48px;
+    height: 48px;
+  }
+  .header-actions .icon-button svg {
+    width: 28px;
+    height: 28px;
+  }
+  .panel-title small {
+    font-size: 34px;
+  }
+  .panel-title small:lang(en) {
+    font-size: 26px;
+  }
+  .key-chip {
+    height: 50px;
+    padding: 0 20px 0 26px;
+    font-size: 20px;
+    gap: 12px;
+  }
+  .key-chip svg {
+    width: 20px;
+    height: 20px;
+  }
+  .focus-toggle svg {
+    width: 26px;
+    height: 26px;
+  }
+  .zheng {
+    --cap: 84px;
+    --tail: 56px;
+  }
+  .string {
+    grid-template-columns: 36px 44px 1fr;
+  }
+  .note-name {
+    font-size: 17px;
+  }
+  .peg {
+    width: 10px;
+    height: 10px;
+  }
+  .peg::after {
+    left: 12px;
+    top: 4.25px;
+    width: 9px;
+  }
+  .lang-en .register button,
+  .register button {
+    width: 58px;
+    height: 46px;
+    font-size: 18px;
+  }
+  .lang-en .register button {
+    font-size: 17px;
+    font-weight: 500;
+  }
+  .register-stop > i {
+    height: clamp(30px, 6vh, 56px);
+  }
+  .bank-nav button {
+    font-size: 19px;
+    gap: 14px;
+    max-width: 210px;
+    height: 52px;
+  }
+  .bank-nav button svg {
+    width: 22px;
+    height: 22px;
+  }
+  .bank-nav button:disabled {
+    opacity: 0.5;
+  }
+  .pill {
+    width: min(100%, 860px);
+    height: 100px;
+    padding: 0 26px 0 30px;
+  }
+  .pill-record {
+    font-size: 22px;
+    padding: 0 36px 0 30px;
     gap: 16px;
   }
-  .transport .restart,
-  .transport .stop {
+  .record-dot {
+    width: 20px;
+    height: 20px;
+  }
+  .pill-divider {
+    height: 50px;
+  }
+  .pill-player {
+    gap: 20px;
+    padding: 0 24px 0 44px;
+  }
+  .pill-play {
+    width: 70px;
+    height: 70px;
+  }
+  .pill-play .lucide {
+    width: 22px;
+    height: 22px;
+  }
+  .pill-title,
+  .lang-en .pill-title {
+    font-size: 22px;
+  }
+  .pill-time .pill-bpm,
+  .lang-zh .pill-bpm-top {
     display: none;
   }
-  .volume-control {
-    width: 200px;
+  .pill-sub {
+    display: flex;
+    font-size: 17px;
+  }
+  .pill-sub .pill-bpm {
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    opacity: 0.9;
+  }
+  .pill-time {
+    font-size: 17px;
+  }
+  .pill-gear {
+    width: 64px;
+    height: 64px;
+    margin: 0 10px 0 40px;
+  }
+  .pill-gear svg {
+    width: 32px;
+    height: 32px;
   }
 }
-@media (min-width: 601px) and (max-width: 999px) and (orientation: portrait) {
-  .percussion-board {
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: 1.25fr 1fr 1fr;
+
+@media (min-width: 1000px) and (max-height: 820px) and (min-height: 560px) {
+  .site-header {
+    height: 70px;
   }
-  .drum-pad.lead-pad {
-    grid-column: 1 / -1;
-    grid-row: auto;
+  .panel-head {
+    min-height: 0;
+    padding-bottom: 14px;
   }
-  .percussion-board.drum-bank {
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(4, 1fr);
+  .panel-title span,
+  .lang-en .panel-title span {
+    font-size: 48px;
   }
-}
-@media (max-width: 820px) {
-  .desktop-nav,
-  .desktop-settings {
-    display: none;
+  .panel-title small {
+    font-size: 24px;
   }
-  .mobile-menu {
-    display: inline-flex;
+  .key-chip {
+    height: 40px;
+    font-size: 16px;
+  }
+  .pad-name {
+    font-size: 38px;
+  }
+  .lead-pad .pad-name {
+    font-size: 46px;
+  }
+  .bank-two .pad-name {
+    font-size: 26px;
+  }
+  .pad-en {
+    font-size: 15px;
+  }
+  .bank-nav {
+    min-height: 58px;
+    padding-top: 10px;
+  }
+  .bank-nav button {
+    height: 42px;
+  }
+  .pill-dock {
+    padding: 20px var(--gutter) 16px;
+  }
+  .site-header {
+    height: 76px;
+  }
+  .seal {
+    width: 40px;
+    height: 40px;
+  }
+  .brand-name {
+    font-size: 18px;
+  }
+  .desktop-nav button::after {
+    bottom: 18px;
+  }
+  .key-chip {
+    height: 42px;
+    font-size: 17px;
+  }
+  .note-name {
+    font-size: 15px;
+  }
+  .register button,
+  .lang-en .register button {
+    height: 40px;
+    font-size: 16px;
+  }
+  .bank-nav button {
+    height: 44px;
+    font-size: 17px;
+  }
+  .pill {
+    height: 80px;
+  }
+  .pill-play {
+    width: 58px;
+    height: 58px;
+  }
+  .pill-record {
+    font-size: 19px;
+  }
+  .pill-title,
+  .lang-en .pill-title {
+    font-size: 19px;
+  }
+  .pill-sub,
+  .pill-time {
+    font-size: 15px;
+  }
+  .pill-gear {
+    width: 54px;
+    height: 54px;
   }
 }
 
 /* ───────────── Phones ───────────── */
 
-@media (max-width: 720px) {
-  dialog.overlay-sheet {
-    inset: auto 0 0 0;
-    width: 100%;
-    height: auto;
-    max-height: calc(100dvh - 44px - env(safe-area-inset-top));
-  }
-  .overlay-sheet .overlay-panel {
-    height: auto;
-    max-height: calc(100dvh - 44px - env(safe-area-inset-top));
-    border-left: 0;
-    border-radius: 22px 22px 0 0;
-    animation-name: sheet-in-up;
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-  .overlay-sheet.closing .overlay-panel {
-    animation-name: sheet-out-down;
-  }
-  .overlay-sheet .overlay-panel.dragging {
-    animation: none;
-    transition: none;
-  }
-  .overlay-sheet .overlay-panel:not(.dragging) {
-    transition: transform 0.3s var(--ease);
-  }
-  .overlay-sheet .overlay-header {
-    padding: 30px 16px 18px 24px;
-    touch-action: none;
-  }
-  .grabber {
-    display: block;
-    position: absolute;
-    top: 9px;
-    left: 50%;
-    width: 38px;
-    height: 5px;
-    margin-left: -19px;
-    border-radius: 3px;
-    background: var(--line-strong);
-  }
-  .overlay-header h2 {
-    font-size: 26px;
-  }
-  .overlay-body {
-    --bpt: 18px;
-    --bpx: 24px;
-    --bpb: 30px;
-  }
-}
-
 @media (max-width: 600px) {
   :root {
-    --gutter: 16px;
-    --transport-h: 112px;
+    --gutter: 18px;
   }
-  .studio-shell {
-    height: 100dvh;
-    min-height: 640px;
+  .page-dots,
+  .focus-toggle,
+  .key-chip {
+    flex-shrink: 0;
   }
-  .site-header {
-    height: 58px;
-    border-bottom: 0;
+  .lang-en .panel-title span {
+    font-size: 32px;
   }
-  .brand {
-    gap: 10px;
-  }
-  .seal {
-    width: 30px;
-    height: 30px;
-  }
-  .brand-name {
-    font-size: 15px;
-    letter-spacing: 0.14em;
-  }
-  .header-actions {
-    gap: 2px;
-    margin-right: -6px;
-  }
-  .lang-button {
-    height: 32px;
-    min-width: 40px;
-    margin-right: 4px;
-  }
-  .workspace {
-    padding-top: 4px;
-  }
-  .instrument-heading {
-    grid-template-columns: 1fr auto;
-    grid-template-rows: auto auto;
-    gap: 14px 8px;
-    margin-bottom: 10px;
-  }
-  .mode-tabs {
-    grid-column: 1 / -1;
-    grid-row: 1;
-    min-width: 0;
-  }
-  .instrument-title {
-    grid-row: 2;
-  }
-  .instrument-title h1 {
-    font-size: 22px;
-  }
-  .instrument-title > span {
-    display: inline;
-    font-size: 10px;
-    letter-spacing: 0.2em;
-  }
-  .instrument-title > span:lang(zh-Hant) {
-    font-size: 13px;
-  }
-  .focus-button {
-    grid-row: 2;
-    height: 32px;
-    padding: 0 12px;
-    font-size: 12px;
-    gap: 6px;
-  }
-  .board-wrap {
-    min-height: 280px;
-  }
-  .soundboard {
-    --label-w: 36px;
-    --end-w: 14px;
-    min-height: 280px;
-    border-radius: 14px;
-    padding: 8px 0;
-  }
-  .ridge {
-    top: -8px;
-    bottom: -8px;
-  }
-  .ridge-head {
-    right: 6px;
-    width: 8px;
-  }
-  .scale-number {
-    display: none;
-  }
-  .string {
-    min-height: 17px;
-  }
-  .string-track {
-    margin: 0 0 0 7px;
-  }
-  .note-name {
-    font-size: 11px;
-  }
-  .bridge {
-    width: 13px;
-    height: 11px;
-  }
-  .enable-overlay {
-    border-radius: 14px;
-  }
-  .enable-button {
-    padding: 22px 20px 20px;
-  }
-  .enable-button strong {
-    font-size: 18px;
-  }
-  .percussion-board {
-    min-height: 280px;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1.15fr 1fr 1fr 1fr;
-    gap: 8px;
-  }
-  .drum-pad {
-    gap: 3px;
-    border-radius: 13px;
-  }
-  .drum-pad.lead-pad {
-    grid-column: 1 / -1;
-    grid-row: auto;
-  }
-  .drum-pad::before {
-    display: none;
-  }
-  .pad-index {
-    top: 8px;
-    left: 10px;
-    font-size: 10px;
-  }
-  .pad-name {
-    font-size: 24px;
-  }
-  .lead-pad .pad-name {
-    font-size: 30px;
-  }
-  .drum-bank .pad-name {
-    font-size: 19px;
-  }
-  .pad-english {
-    font-size: 11px;
-    letter-spacing: 0.03em;
-  }
-  .drum-bank .drum-pad {
-    grid-column: auto;
-  }
-  .drum-bank {
-    grid-template-rows: repeat(4, 1fr);
-  }
-  .instrument-options {
-    min-height: 46px;
-    font-size: 12px;
-  }
-  .playing-hint {
-    letter-spacing: 0;
-  }
-  .register-select button {
-    padding: 0 12px;
-  }
-  .bank-nav {
-    font-size: 13px;
-  }
-  .bank-label {
-    font-size: 12px;
-  }
-  .performance-controls {
-    gap: 12px;
-    min-height: 54px;
-    padding-bottom: 6px;
-  }
-  .record-button {
-    font-size: 16px;
-    gap: 8px;
-    padding: 0 12px 0 10px;
-    margin-left: -10px;
-  }
-  .record-dot {
-    width: 10px;
-    height: 10px;
-  }
-  .volume-control {
-    flex: 1;
-    width: auto;
-    max-width: 150px;
-    gap: 10px;
-  }
-  .tuning-button {
+  .lang-en .key-chip {
+    height: 36px;
+    padding: 0 10px 0 14px;
     font-size: 14px;
     gap: 6px;
-    padding: 0 10px;
-    margin-right: -10px;
   }
-  .transport {
-    grid-template-columns: 1fr auto auto;
-    grid-template-rows: auto auto;
-    gap: 8px 14px;
-    padding: 12px 0 14px;
+  .lang-en .panel-head {
+    gap: 6px;
   }
-  .song-summary {
-    gap: 12px;
+  .lang-en .pill-record:not(.recording) {
+    padding: 0 16px;
   }
-  .song-mark {
-    width: 40px;
-    height: 40px;
-    border-radius: 11px;
-    font-size: 19px;
+  .lang-en .pill-record:not(.recording) .record-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
   }
-  .song-text strong {
-    font-size: 17px;
+}
+@media (max-width: 380px) {
+  .brand-name {
+    font-size: 14px;
+    letter-spacing: 0.18em;
   }
-  .lang-en .song-text strong {
-    font-size: 16px;
+  .panel-title span {
+    font-size: 38px;
   }
-  .song-text small {
-    font-size: 11px;
+  .lang-en .panel-title span {
+    font-size: 28px;
   }
-  .play-controls {
-    grid-row: 1;
-    grid-column: 2;
+  .lang-en .key-chip {
+    padding: 0 8px 0 12px;
+    font-size: 13px;
   }
-  .play-button {
-    width: 46px;
-    height: 46px;
+  .key-chip {
+    padding: 0 10px 0 14px;
   }
-  .timeline {
-    grid-row: 2;
-    grid-column: 1 / -1;
-    gap: 12px;
-  }
-  .transport .loop {
-    display: none;
-  }
-  .tempo-button {
-    grid-row: 1;
-    grid-column: 3;
-    padding: 0 8px;
-    margin-right: -8px;
-  }
-  .tempo-value {
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0;
-    line-height: 1.2;
-  }
-  .overlay-dialog .overlay-header {
-    padding: 24px 16px 2px 22px;
-  }
-  .overlay-dialog .overlay-body {
-    --bpt: 16px;
-    --bpx: 22px;
-    --bpb: 22px;
-  }
-  .focus-mode {
-    min-height: 0;
-  }
-  .focus-mode .workspace {
-    padding-top: 12px;
-  }
-  .focus-mode .instrument-heading {
-    grid-template-columns: 1fr auto;
-    grid-template-rows: auto;
-    margin-bottom: 10px;
-  }
-  .focus-mode .instrument-title {
-    display: none;
-  }
-  .focus-mode .mode-tabs {
-    grid-column: 1;
-  }
-  .focus-mode .focus-button {
-    grid-row: 1;
-    height: 44px;
-  }
-  .focus-mode .string {
-    min-height: 0;
+  .pill-record {
+    padding: 0 10px 0 12px;
   }
 }
 
-@media (max-width: 360px) {
-  .volume-control {
-    max-width: 110px;
-  }
-  .record-button,
-  .tuning-button {
-    font-size: 15px;
-  }
-}
+/* ───────────── Phones held sideways: the strings stand upright ───────────── */
 
-/* ───────────── Phones held sideways ───────────── */
-
-@media (max-height: 520px) and (orientation: landscape) {
+@media (max-height: 559px) and (orientation: landscape) {
   :root {
-    --gutter: 20px;
-    --transport-h: 52px;
+    --gutter: 22px;
   }
   .studio-shell {
-    height: 100dvh;
     min-height: 0;
     max-width: none;
   }
   .site-header {
     height: 46px;
   }
-  .desktop-nav {
-    display: flex;
-    gap: 22px;
-  }
-  .desktop-nav button {
-    font-size: 14px;
-  }
-  .mobile-menu {
-    display: none;
-  }
-  .desktop-settings {
-    display: inline-flex;
-  }
   .seal {
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
   }
   .brand-name {
-    font-size: 14px;
+    font-size: 13px;
   }
-  .lang-button {
-    height: 30px;
+  .panel-head {
+    padding-bottom: 8px;
+    gap: 8px;
   }
-  .icon-button {
-    width: 36px;
-    height: 36px;
+  .panel-title span,
+  .lang-en .panel-title span {
+    font-size: 26px;
   }
-  .workspace {
-    padding-top: 8px;
+  .panel-title small {
+    display: inline;
+    font-size: 16px;
   }
-  .instrument-heading {
-    display: flex;
-    margin-bottom: 8px;
-  }
-  .instrument-title {
-    margin-right: auto;
-  }
-  .instrument-title h1 {
-    font-size: 20px;
-  }
-  .instrument-title > span {
-    display: none;
-  }
-  .segmented {
+  .key-chip {
     height: 34px;
-    min-width: 200px;
-  }
-  .segmented button {
     font-size: 14px;
   }
-  .focus-button {
-    height: 32px;
+  .zheng {
+    --cap: 44px;
+    --tail: 16px;
+    flex-direction: column;
+    margin-right: 0;
+    border-radius: 50% / 22px;
   }
-  .board-wrap,
-  .soundboard,
-  .percussion-board {
-    min-height: 110px;
+  .zheng-cap {
+    width: auto;
+    height: var(--cap);
+    box-shadow:
+      inset 0 -2px 0 #1f120b,
+      inset 0 -4px 0 rgb(214 168 116 / 0.28),
+      0 6px 12px -6px rgb(0 0 0 / 0.55);
   }
-  .soundboard {
-    --label-w: 22px;
-    --end-w: 10px;
-    padding: 0 10px;
-    background-image: url('/images/walnut-v.webp');
+  .zheng-tail {
+    width: auto;
+    height: var(--tail);
+    box-shadow:
+      inset 0 2px 0 #1f120b,
+      0 -6px 12px -6px rgb(0 0 0 / 0.55);
   }
-  .strings {
+  .register,
+  .register-stop {
+    /* Strings run low to high, left to right; so does the register switch. */
     flex-direction: row-reverse;
+  }
+  .register-stop > i {
+    width: 28px;
+    height: 1px;
+    margin: 0 6px;
+  }
+  .register button {
+    height: 34px;
+  }
+  .zheng-strings {
+    flex-direction: row-reverse;
+    padding: 0 18px;
   }
   .string {
     min-height: 0;
     min-width: 0;
     grid-template-columns: 1fr;
-    grid-template-rows: var(--label-w) 1fr var(--end-w);
+    grid-template-rows: 16px 18px 1fr;
     justify-items: center;
   }
+  .peg {
+    justify-self: center;
+    margin: 4px 0 0;
+  }
+  .peg::after {
+    display: none;
+  }
+  .note-name {
+    padding: 0;
+    font-size: 11px;
+  }
   .string-track {
-    margin: 6px 0 0;
+    margin: 4px 0 0;
     width: 100%;
     flex-direction: column;
     justify-content: center;
@@ -2534,136 +2901,64 @@ dialog.overlay-dialog {
   .string-line {
     width: var(--gauge, 1px);
     height: 100%;
-    background: linear-gradient(to right, #f6ebd0, #b89d70);
-  }
-  .string-line::after {
-    inset: 0 -10px;
+    background: linear-gradient(to right, #fbf2de, #c7ae80);
   }
   .green-string .string-line {
-    background: linear-gradient(to right, #d3e6c8, #7f9f73);
+    background: linear-gradient(to right, #b9e0cf, #4f8f78);
+  }
+  .string-line::after {
+    inset: 0 -12px;
   }
   .bridge {
-    /* Seen from the player's end: the string runs over the apex, legs either side. */
-    top: var(--bridge);
+    top: calc(100% - var(--bridge));
     left: 50%;
     margin-top: 0;
     transform: translate(-50%, -50%);
   }
-  .ridge {
-    left: -10px;
-    right: -10px;
-    width: auto;
-    height: 6px;
-    top: auto;
-    bottom: auto;
-    background: linear-gradient(to bottom, #4a3624 0%, #a88458 38%, #caa877 52%, #7a5a39 100%);
-  }
-  .ridge-tail {
-    top: calc(var(--label-w) + 2px);
-  }
-  .ridge-head {
-    bottom: 4px;
-    right: -10px;
-    height: 7px;
-    width: auto;
-  }
-  .note-name {
-    font-size: 10px;
-    align-self: end;
-  }
-  .scale-number,
-  .board-signature,
-  .key-label {
-    display: none;
-  }
-  .enable-button {
-    padding: 14px 22px;
-    gap: 8px;
-  }
-  .enable-seal,
-  .enable-progress {
-    display: none;
-  }
-  .percussion-board {
+  .pads {
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: 1fr 1fr;
     gap: 8px;
   }
-  .drum-pad.lead-pad {
+  .pad.lead-pad {
+    grid-column: auto;
     grid-row: span 2;
   }
-  .drum-pad::before,
-  .pad-english {
-    display: none;
+  .pads.bank-two {
+    grid-template-rows: 1fr 1fr;
   }
   .pad-name {
-    font-size: 22px;
+    font-size: 30px;
   }
   .lead-pad .pad-name {
-    font-size: 32px;
+    font-size: 40px;
   }
-  .drum-bank .pad-name {
-    font-size: 18px;
+  .bank-two .pad-name {
+    font-size: 22px;
   }
-  .pad-index {
-    top: 6px;
-    left: 9px;
-    font-size: 10px;
+  .pad-en {
+    font-size: 13px;
   }
-  .instrument-options {
-    min-height: 34px;
+  .bank-nav {
+    min-height: 40px;
+    padding-top: 2px;
   }
-  .segmented.compact {
-    height: 28px;
-  }
-  .performance-controls {
-    min-height: 42px;
-    padding: 0;
-  }
-  .record-button,
-  .tuning-button {
-    min-height: 36px;
-    font-size: 15px;
-  }
-  .volume-control {
-    width: 170px;
-  }
-  .transport {
-    display: flex;
-    gap: 14px;
-    padding: 6px 0;
-  }
-  .song-summary {
-    min-width: 150px;
-    max-width: 220px;
-  }
-  .song-mark {
-    width: 32px;
-    height: 32px;
-    border-radius: 9px;
-    font-size: 16px;
-  }
-  .song-text strong {
-    font-size: 15px;
-  }
-  .song-text small,
-  .transport .loop,
-  .transport .restart,
-  .transport .stop {
-    display: none;
-  }
-  .play-button {
-    width: 36px;
+  .bank-nav button {
     height: 36px;
   }
-  .timeline {
-    flex: 1;
+  .pill-dock {
+    padding: 8px var(--gutter) calc(8px + env(safe-area-inset-bottom));
   }
-  .tempo-button {
-    min-height: 36px;
+  .pill {
+    height: 54px;
+    width: min(100%, 640px);
   }
-  .focus-mode .instrument-title {
-    display: none;
+  .pill-record {
+    height: 42px;
+  }
+  .pill-play {
+    width: 40px;
+    height: 40px;
   }
   .overlay-sheet .overlay-header {
     padding: 16px 18px 12px 24px;
@@ -2692,24 +2987,36 @@ dialog.overlay-dialog {
   }
 }
 
+
 /* Hover only where a real pointer can hover; taps on phones never leave sticky highlights. */
 @media (hover: hover) {
   .desktop-nav button:not([aria-current='page']):hover {
-    color: var(--ink);
+    color: var(--cinnabar);
   }
   .lang-button:hover {
-    border-color: var(--pine);
-    color: var(--pine);
-    background: var(--surface);
+    background: var(--pine-soft);
   }
   .icon-button:not(.selected):hover {
     background: var(--pine-soft);
-    color: var(--ink);
   }
-  .focus-button:hover {
+  .key-chip:hover {
     background: var(--surface);
-    border-color: var(--pine);
-    color: var(--pine);
+    box-shadow: inset 0 0 0 1.5px var(--pine);
+  }
+  .page-dots button:hover i {
+    box-shadow: inset 0 0 0 1.5px var(--pine-ink);
+  }
+  .register button:not([aria-pressed='true']):hover {
+    background: rgb(255 255 255 / 0.08);
+  }
+  .bank-nav button:not(:disabled):hover {
+    background: var(--pine-soft);
+  }
+  .pill-record:not(.recording):hover,
+  .pill-song:hover,
+  .pill-gear:hover,
+  .pill-play:hover {
+    background: rgb(255 255 255 / 0.08);
   }
   .segmented button:not([aria-pressed='true']):hover {
     color: var(--ink);
@@ -2721,19 +3028,10 @@ dialog.overlay-dialog {
     text-decoration: underline;
     text-underline-offset: 4px;
   }
-  .record-button:not(.recording):hover {
-    background: var(--pine-soft);
-  }
-  .tuning-button:hover {
-    background: var(--pine-soft);
-  }
-  .song-summary:hover {
-    background: var(--pine-soft);
-  }
-  .play-button:hover {
+  .np-play:hover {
     background: var(--pine-deep);
   }
-  .tempo-button:hover {
+  .np-tempo:hover {
     background: var(--pine-soft);
   }
   .menu-list button:hover {

@@ -1,29 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import {
-  ChevronLeft,
-  ChevronRight,
-  Download,
-  FileMusic,
-  Maximize2,
-  Menu,
-  Minimize2,
-  Settings2,
-  Share2,
-  SlidersHorizontal,
-  Volume2,
-  VolumeX,
-  X,
-} from 'lucide-react'
+import { ChevronDown, Download, FileMusic, Maximize2, Menu, Minimize2, Share2, Volume2, VolumeX, X } from 'lucide-react'
 import { AudioEngine } from './lib/audio-engine'
 import { defaultSong, keyboardRow, notesForRegister, percussion, type Recording, type Song } from './lib/catalog'
 import { deleteRecording, download, listRecordings, parseRecording, saveRecording, StorageError } from './lib/storage'
 import { flash } from './lib/flash'
-import { I18n, initialLang, isKey, makeT, type Lang } from './i18n'
-import { Instrument } from './components/Instrument'
-import { RecordControl, Transport } from './components/Transport'
+import { I18n, initialLang, isKey, makeT, useI18n, type Lang } from './i18n'
+import { Guzheng } from './components/Guzheng'
+import { Percussion } from './components/Percussion'
+import { NowPlaying, Pill } from './components/Transport'
 import { Library, type Panel } from './components/Library'
 import { Overlay } from './components/Overlay'
-import { Segmented, Slider } from './components/Controls'
 
 type Edit = { kind: 'rename' | 'delete' | 'share'; record: Recording }
 type Mode = 'guzheng' | 'percussion'
@@ -81,6 +67,7 @@ export default function App() {
   const stopRecordRef = useRef<() => void>(() => {})
   const noticeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const unmuteVolume = useRef(0.8)
+  const swipeStart = useRef<number | null>(null)
 
   const openPanel = useCallback((p: Panel | null) => {
     setPanel(p)
@@ -206,7 +193,7 @@ export default function App() {
         return
       const index = keyboardRow.indexOf(e.key.toLowerCase())
       const note =
-        mode === 'guzheng'
+        index >= 0
           ? notesForRegister(register, bNotes)[index]
           : percussion.filter((p) => p.group === group)[Number(e.key) - 1]?.id
       if (note) {
@@ -216,7 +203,7 @@ export default function App() {
     }
     window.addEventListener('keydown', key)
     return () => window.removeEventListener('keydown', key)
-  }, [armed, mode, register, bNotes, group, panel, edit, engine])
+  }, [armed, register, bNotes, group, panel, edit, engine])
 
   const enable = async () => {
     if (!engine) return false
@@ -393,8 +380,17 @@ export default function App() {
   }
 
   const shownEdit = edit ?? lastEdit
-  const instrumentName = mode === 'guzheng' ? t('guzheng') : t('percussion')
-  const instrumentOther = mode === 'guzheng' ? t('guzhengOther') : t('percussionOther')
+  // Swipe across a panel heading to move between instruments on phones.
+  const swipe = {
+    onPointerDown: (e: React.PointerEvent) => {
+      swipeStart.current = e.clientX
+    },
+    onPointerUp: (e: React.PointerEvent) => {
+      const dx = e.clientX - (swipeStart.current ?? e.clientX)
+      swipeStart.current = null
+      if (Math.abs(dx) > 48) setMode(dx < 0 ? 'percussion' : 'guzheng')
+    },
+  }
 
   return (
     <I18n.Provider value={i18n}>
@@ -415,22 +411,17 @@ export default function App() {
             </span>
           </button>
           <nav className="desktop-nav" aria-label={t('mainNav')}>
-            <button type="button" aria-current={panel === null ? 'page' : undefined} onClick={() => openPanel(null)}>
-              {t('navPlay')}
-            </button>
-            <button type="button" aria-current={panel === 'songs' ? 'page' : undefined} onClick={() => openPanel('songs')}>
-              {t('navSongs')}
-            </button>
-            <button
-              type="button"
-              aria-current={panel === 'recordings' ? 'page' : undefined}
-              onClick={() => openPanel('recordings')}
-            >
-              {t('navRecordings')}
-            </button>
-            <button type="button" aria-current={panel === 'guide' ? 'page' : undefined} onClick={() => openPanel('guide')}>
-              {t('navGuide')}
-            </button>
+            {(
+              [
+                ['songs', 'navSongs'],
+                ['recordings', 'navRecordings'],
+                ['guide', 'navGuide'],
+              ] as const
+            ).map(([key, label]) => (
+              <button type="button" key={key} aria-current={panel === key ? 'page' : undefined} onClick={() => openPanel(key)}>
+                {t(label)}
+              </button>
+            ))}
           </nav>
           <div className="header-actions">
             <button
@@ -442,62 +433,66 @@ export default function App() {
             >
               {t('langToggle')}
             </button>
+            <i className="header-divider" aria-hidden="true" />
             <button
               type="button"
-              className="icon-button"
+              className="icon-button header-mute"
               aria-label={volume === 0 ? t('unmute') : t('mute')}
               aria-pressed={volume === 0}
               onClick={() => setVolume(volume === 0 ? unmuteVolume.current || 0.8 : 0)}
             >
-              {volume === 0 ? <VolumeX size={20} strokeWidth={1.6} /> : <Volume2 size={20} strokeWidth={1.6} />}
+              {volume === 0 ? <VolumeX size={22} strokeWidth={1.5} /> : <Volume2 size={22} strokeWidth={1.5} />}
             </button>
-            <button
-              type="button"
-              className="icon-button desktop-settings"
-              aria-label={t('openSettings')}
-              onClick={() => openPanel('settings')}
-            >
-              <Settings2 size={20} strokeWidth={1.6} />
-            </button>
-            <button type="button" className="icon-button mobile-menu" aria-label={t('openMenu')} onClick={() => openPanel('menu')}>
-              <Menu size={21} strokeWidth={1.6} />
+            <button type="button" className="icon-button" aria-label={t('openMenu')} onClick={() => openPanel('menu')}>
+              <Menu size={24} strokeWidth={1.5} />
             </button>
           </div>
         </header>
 
-        <main className="workspace">
-          <div className="instrument-heading">
-            <div className="instrument-title">
-              <h1>{instrumentName}</h1>
-              <span lang={lang === 'zh' ? 'en' : 'zh-Hant'}>{instrumentOther}</span>
-            </div>
-            <Segmented<Mode>
-              className="mode-tabs"
-              label={t('instrument')}
-              value={mode}
-              onChange={setMode}
-              options={[
-                { value: 'guzheng', label: t('guzheng') },
-                { value: 'percussion', label: t('percussion') },
-              ]}
-            />
-            <button
-              type="button"
-              className="focus-button"
-              onClick={() => setFocus(!focus)}
-              aria-label={focus ? t('exitFocusLabel') : t('focusLabel')}
-            >
-              {focus ? <Minimize2 size={15} strokeWidth={1.7} /> : <Maximize2 size={15} strokeWidth={1.7} />}
-              <span>{focus ? t('exitFocus') : t('focus')}</span>
-            </button>
-          </div>
-
-          <div className="board-wrap">
-            <Instrument engine={engine} mode={mode} register={register} bNotes={bNotes} group={group} enabled={armed} />
+        <main className={`stage-shell show-${mode}`}>
+          <div className="stage">
+            <section className="panel panel-zheng" aria-labelledby="zheng-title">
+              <div className="panel-head" {...swipe}>
+                <h1 id="zheng-title" className="panel-title">
+                  <span>{t('guzheng')}</span>
+                  <small lang={lang === 'zh' ? 'en' : 'zh-Hant'}>{t('guzhengOther')}</small>
+                </h1>
+                <button type="button" className="key-chip" onClick={() => openPanel('settings')} aria-label={t('keyLabel')}>
+                  <span>{t('keyOfC')}</span>
+                  <ChevronDown size={16} strokeWidth={1.8} />
+                </button>
+                <button
+                  type="button"
+                  className="icon-button focus-toggle"
+                  onClick={() => setFocus(!focus)}
+                  aria-pressed={focus}
+                  aria-label={focus ? t('exitFocusLabel') : t('focusLabel')}
+                >
+                  {focus ? <Minimize2 size={21} strokeWidth={1.5} /> : <Maximize2 size={21} strokeWidth={1.5} />}
+                </button>
+                <PageDots mode={mode} setMode={setMode} />
+              </div>
+              <div className="panel-body">
+                <Guzheng engine={engine} register={register} setRegister={setRegister} bNotes={bNotes} enabled={armed} />
+              </div>
+            </section>
+            <i className="stage-divider" aria-hidden="true" />
+            <section className="panel panel-drums" aria-labelledby="drums-title">
+              <div className="panel-head" {...swipe}>
+                <h2 id="drums-title" className="panel-title">
+                  <span>{t('percussion')}</span>
+                  <small lang={lang === 'zh' ? 'en' : 'zh-Hant'}>{t('percussionOther')}</small>
+                </h2>
+                <PageDots mode={mode} setMode={setMode} />
+              </div>
+              <div className="panel-body">
+                <Percussion engine={engine} group={group} setGroup={setGroup} enabled={armed} />
+              </div>
+            </section>
             {!armed && (
               <div className="enable-overlay">
                 <button type="button" className="enable-button" onClick={enable} disabled={!loaded && !loadingError}>
-                  <img className="enable-seal" src={`${import.meta.env.BASE_URL}seal.png`} alt="" width={40} height={40} />
+                  <img className="enable-seal" src={`${import.meta.env.BASE_URL}seal.png`} alt="" width={44} height={44} />
                   <strong>{loadingError ? t('enableRetry') : loaded ? t('enable') : `${t('loading')} ${Math.round(progress * 100)}%`}</strong>
                   <span className="enable-progress" aria-hidden="true">
                     <i style={{ transform: `scaleX(${loaded ? 1 : progress})` }} />
@@ -507,74 +502,38 @@ export default function App() {
               </div>
             )}
           </div>
-
-          <div className="instrument-options">
-            {mode === 'guzheng' ? (
-              <>
-                <span className="playing-hint">{t('hintGuzheng')}</span>
-                <Segmented<number>
-                  className="register-select compact"
-                  label={t('register')}
-                  value={register}
-                  onChange={setRegister}
-                  options={(
-                    [
-                      [1, 'regLow'],
-                      [2, 'regMid'],
-                      [3, 'regHigh'],
-                    ] as const
-                  ).map(([value, key]) => ({ value, label: t(key), aria: t('regLabel', { name: t(key) }) }))}
-                />
-              </>
-            ) : (
-              <>
-                <button type="button" className="text-button bank-nav" onClick={() => setGroup(group === 0 ? 1 : 0)} aria-label={t('prevBankLabel')}>
-                  <ChevronLeft size={16} strokeWidth={1.7} />
-                  <span>{t('prevBank')}</span>
-                </button>
-                <span className="bank-label" aria-live="polite">
-                  <span>{group === 0 ? t('bank0') : t('bank1')}</span>
-                  <i className={group === 0 ? 'on' : ''} />
-                  <i className={group === 1 ? 'on' : ''} />
-                </span>
-                <button type="button" className="text-button bank-nav" onClick={() => setGroup(group === 0 ? 1 : 0)} aria-label={t('nextBankLabel')}>
-                  <span>{t('nextBank')}</span>
-                  <ChevronRight size={16} strokeWidth={1.7} />
-                </button>
-              </>
-            )}
-          </div>
-
-          <div className="performance-controls">
-            <RecordControl active={recording} engine={engine} onClick={toggleRecording} />
-            <div className="volume-control">
-              <Volume2 size={17} strokeWidth={1.6} aria-hidden="true" />
-              <Slider label={t('volume')} min={0} max={100} value={volume * 100} onChange={(v) => setVolume(v / 100)} />
-            </div>
-            <button type="button" className="tuning-button" onClick={() => openPanel('settings')} aria-label={t('keyLabel')}>
-              <span>{t('keyOfC')}</span>
-              <SlidersHorizontal size={14} strokeWidth={1.7} />
-            </button>
+          <div className="pill-dock">
+            <Pill
+              engine={engine}
+              song={selected}
+              playing={playing}
+              speed={speed}
+              recording={recording}
+              onRecord={toggleRecording}
+              onPlay={togglePlay}
+              onSongs={() => openPanel('songs')}
+              onSettings={() => openPanel('settings')}
+            />
           </div>
         </main>
 
-        <Transport
-          engine={engine}
-          song={selected}
-          playing={playing}
-          loop={loop}
-          speed={speed}
-          onPlay={togglePlay}
-          onStop={() => {
-            engine?.stop()
-            setPlaying(false)
-          }}
-          onLoop={() => setLoop(!loop)}
-          onSpeed={() => openPanel('settings')}
-          onLibrary={() => openPanel('songs')}
-        />
-
         <Library
+          nowPlaying={
+            <NowPlaying
+              engine={engine}
+              song={selected}
+              playing={playing}
+              loop={loop}
+              speed={speed}
+              onPlay={togglePlay}
+              onStop={() => {
+                engine?.stop()
+                setPlaying(false)
+              }}
+              onLoop={() => setLoop(!loop)}
+              onTempo={() => openPanel('settings')}
+            />
+          }
           panel={panel}
           shown={shownPanel}
           setPanel={openPanel}
@@ -707,3 +666,21 @@ export default function App() {
   )
 }
 
+function PageDots({ mode, setMode }: { mode: Mode; setMode: (m: Mode) => void }) {
+  const { t } = useI18n()
+  return (
+    <div className="page-dots" role="group" aria-label={t('instrument')}>
+      {(['guzheng', 'percussion'] as const).map((m) => (
+        <button
+          key={m}
+          type="button"
+          aria-current={mode === m ? 'true' : undefined}
+          aria-label={t('showInstrument', { name: t(m) })}
+          onClick={() => setMode(m)}
+        >
+          <i />
+        </button>
+      ))}
+    </div>
+  )
+}

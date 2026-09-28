@@ -7,11 +7,14 @@ export function flash(root: HTMLElement | null, note: string) {
     return
   }
   if (el.classList.contains('string')) {
-    el.querySelector('.string-line')?.animate(
+    const line = el.querySelector<HTMLElement>('.string-line')
+    // Thicken the string across its width, whichever way it runs (phones held sideways stand it upright).
+    const axis = line && line.offsetHeight > line.offsetWidth ? 'scaleX' : 'scaleY'
+    line?.animate(
       [
-        { transform: 'scaleY(2.6)', filter: 'brightness(2.1)', boxShadow: '0 0 12px 1px rgb(243 222 170 / 0.9)' },
-        { transform: 'scaleY(1.4)', filter: 'brightness(1.5)', boxShadow: '0 0 6px 0 rgb(243 222 170 / 0.45)', offset: 0.25 },
-        { transform: 'scaleY(1)', filter: 'brightness(1)', boxShadow: '0 1px 1px 0 rgb(0 0 0 / 0.55)' },
+        { transform: `${axis}(2.6)`, filter: 'brightness(2.1)', boxShadow: '0 0 12px 1px rgb(243 222 170 / 0.9)' },
+        { transform: `${axis}(1.4)`, filter: 'brightness(1.5)', boxShadow: '0 0 6px 0 rgb(243 222 170 / 0.45)', offset: 0.25 },
+        { transform: `${axis}(1)`, filter: 'brightness(1)', boxShadow: '0 1px 1px 0 rgb(0 0 0 / 0.55)' },
       ],
       { duration: 900, easing: 'cubic-bezier(.2,.7,.3,1)' },
     )
