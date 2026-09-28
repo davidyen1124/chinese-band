@@ -1,6 +1,6 @@
 import { memo, useRef } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { percussion } from '../lib/catalog'
+import { artFor, percussion } from '../lib/catalog'
 import type { AudioEngine } from '../lib/audio-engine'
 import { usePlayable } from '../lib/usePlayable'
 import { useI18n } from '../i18n'
@@ -40,6 +40,12 @@ export const Percussion = memo(function Percussion({ engine, group, setGroup, en
                 if (e.detail === 0) engine?.play(pad.id)
               }}
             >
+              <img
+                className="pad-art"
+                src={`${import.meta.env.BASE_URL}images/perc/${artFor[pad.id]}.webp`}
+                alt=""
+                draggable={false}
+              />
               <span className="pad-name" lang="zh-Hant">
                 {pad.name}
               </span>

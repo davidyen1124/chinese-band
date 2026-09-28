@@ -32,32 +32,6 @@ export function Slider({ value, min, max, step = 1, onChange, label, labelledBy,
   )
 }
 
-export function Switch({
-  checked,
-  onChange,
-  id,
-  labelledBy,
-}: {
-  checked: boolean
-  onChange: (v: boolean) => void
-  id?: string
-  labelledBy?: string
-}) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      id={id}
-      aria-checked={checked}
-      aria-labelledby={labelledBy}
-      className="switch"
-      onClick={() => onChange(!checked)}
-    >
-      <span className="switch-thumb" />
-    </button>
-  )
-}
-
 export function Segmented<V extends string | number>({
   value,
   options,

@@ -29,7 +29,6 @@ export type Percussion = {
   pigment: string
   zh: string
   enNote: string
-  art?: string
 }
 
 export const percussion: Percussion[] = [
@@ -43,7 +42,6 @@ export const percussion: Percussion[] = [
     group: 0,
     zh: '鼓聲厚實，穩住樂曲的脈動。',
     enNote: 'A barrel drum with a deep, round voice. It keeps the pulse honest.',
-    art: 'tanggu',
   },
   {
     id: 'ban',
@@ -55,7 +53,6 @@ export const percussion: Percussion[] = [
     group: 0,
     zh: '木板相擊，聲音短促清脆。',
     enNote: 'Hardwood boards snapped together. Short, dry and decisive.',
-    art: 'ban',
   },
   {
     id: 'chao',
@@ -67,7 +64,6 @@ export const percussion: Percussion[] = [
     group: 0,
     zh: '金屬相擊，讓節奏多一分明亮。',
     enNote: 'A pair of bronze cymbals that add shimmer to the beat.',
-    art: 'bo',
   },
   {
     id: 'kouzi',
@@ -79,7 +75,6 @@ export const percussion: Percussion[] = [
     group: 0,
     zh: '一高一低的木梆相擊，音色乾淨俐落。',
     enNote: 'Two hardwood sticks struck together. Clean, bright, a little bossy.',
-    art: 'bangzi',
   },
   {
     id: 'luo',
@@ -91,7 +86,6 @@ export const percussion: Percussion[] = [
     group: 0,
     zh: '金屬的共鳴舒展綿長，適合段落收尾。',
     enNote: 'A hanging bronze gong whose bloom is made for endings.',
-    art: 'luo',
   },
   {
     id: 'xiangzhan',
@@ -103,7 +97,6 @@ export const percussion: Percussion[] = [
     group: 0,
     zh: '清亮的小型銅鑼，點綴旋律與節拍。',
     enNote: 'A palm-sized bronze gong that sparkles between the beats.',
-    art: 'xiangzhan',
   },
   {
     id: 'xiaogu',
@@ -115,7 +108,6 @@ export const percussion: Percussion[] = [
     group: 0,
     zh: '緊緻有力的鼓點，呼應戲曲的節奏。',
     enNote: 'A tight, crisp drum that leads the rhythm of Chinese opera.',
-    art: 'xiaogu',
   },
   { id: 'lowwar', pigment: 'cinnabar', material: 'skin', name: '低音戰鼓', en: 'Low war drum', pinyin: 'zhàn gǔ', group: 1, zh: '鼓心', enNote: 'Centre' },
   { id: 'lowwarrim', pigment: 'cinnabar-deep', material: 'skin', name: '戰鼓鼓邊', en: 'War drum rim', pinyin: 'gǔ biān', group: 1, zh: '鼓邊', enNote: 'Rim' },
@@ -206,14 +198,31 @@ export const formatTime = (seconds: number) =>
     .toString()
     .padStart(2, '0')}`
 
-/** Strings for one register, listed from the highest (top of the board) to the lowest. */
-export function notesForRegister(register: number, b: boolean) {
-  return Array.from({ length: 3 }, (_, i) =>
-    (b ? [...pentatonic, 'b'] : pentatonic).map((n) => `${n}${register + i}`),
-  )
-    .flat()
-    .reverse()
-}
+/**
+ * The 21 strings of a concert guzheng tuned in C, tonic to tonic: C1 up to C5.
+ * Listed as they lie in front of the player: the farthest (lowest) string first.
+ */
+export const zhengStrings = Array.from({ length: 4 }, (_, i) => pentatonic.map((n) => `${n}${i + 1}`))
+  .flat()
+  .concat('c5')
 
-export const noteNumber: Record<string, string> = { c: '1', d: '2', e: '3', g: '5', a: '6', b: '7' }
-export const keyboardRow = 'poiuytrewqlkjhg'
+/** Computer keys for the strings, lowest to highest: bottom row, home row, top row. */
+export const keyboardRow = 'zxasdfghjklqwertyuiop'
+
+export const artFor: Record<string, string> = {
+  tonggu: 'tanggu',
+  ban: 'ban',
+  chao: 'bo',
+  kouzi: 'bangzi',
+  luo: 'luo',
+  xiangzhan: 'xiangzhan',
+  xiaogu: 'bangu',
+  lowwar: 'zhangu',
+  lowwarrim: 'zhangu',
+  redflower30: 'huapengu',
+  redflowerrim30: 'huapengu',
+  redflower20: 'huapengu',
+  redflowerrim20: 'huapengu',
+  whiteopera25: 'operadrum',
+  whiteoperarim25: 'operadrum',
+}

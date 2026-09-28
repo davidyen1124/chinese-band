@@ -1,8 +1,8 @@
 import { useRef, type ReactNode } from 'react'
 import { ChevronRight, Music2, Pencil, Play, Share2, Trash2, Upload } from 'lucide-react'
 import { Overlay } from './Overlay'
-import { Segmented, Slider, Switch } from './Controls'
-import { formatTime, percussion, songs, type Recording, type Song } from '../lib/catalog'
+import { Segmented, Slider } from './Controls'
+import { artFor, formatTime, percussion, songs, type Recording, type Song } from '../lib/catalog'
 import { useI18n, type Key, type Lang } from '../i18n'
 import { songTitle } from './songText'
 
@@ -23,8 +23,6 @@ type Props = {
   onImport: (f: File) => void
   speed: number
   setSpeed: (n: number) => void
-  bNotes: boolean
-  setBNotes: (b: boolean) => void
   accompaniment: number
   setAccompaniment: (v: number) => void
   volume: number
@@ -39,7 +37,7 @@ const heads: Record<Panel, [Key, Key]> = {
   menu: ['sheetMenu', 'sheetMenuDesc'],
 }
 
-const art = (name: string) => `${import.meta.env.BASE_URL}images/instruments/${name}.webp`
+const img = (path: string) => `${import.meta.env.BASE_URL}images/${path}.webp`
 
 export function Library(p: Props) {
   const { t, lang, setLang } = useI18n()
@@ -155,15 +153,6 @@ export function Library(p: Props) {
               {t('resetTempo')}
             </button>
           </div>
-          <div className="setting setting-inline">
-            <div>
-              <div className="setting-label" id="b-notes-label">
-                {t('bNotes')}
-              </div>
-              <p>{t('bNotesHint')}</p>
-            </div>
-            <Switch labelledBy="b-notes-label" checked={p.bNotes} onChange={p.setBNotes} />
-          </div>
           <LanguageRow lang={lang} setLang={setLang} label={t('language')} />
           <div className="help-block">
             <h3>{t('helpIphone')}</h3>
@@ -178,7 +167,7 @@ export function Library(p: Props) {
       {p.shown === 'guide' && (
         <>
           <article className="guide-hero">
-            <img src={art('guzheng')} alt="" width={800} height={580} decoding="async" />
+            <img src={img('zheng-whole')} alt="" width={1200} height={280} decoding="async" />
             <div>
               <h3>
                 <span lang="zh-Hant">古箏</span>
@@ -215,7 +204,7 @@ export function Library(p: Props) {
               .filter((x) => x.group === 0)
               .map((x) => (
                 <li className="guide-row" key={x.id}>
-                  {x.art && <img src={art(x.art)} alt="" width={160} height={160} loading="lazy" decoding="async" />}
+                  <img src={img(`perc/${artFor[x.id]}`)} alt="" width={160} height={160} loading="lazy" decoding="async" />
                   <div>
                     <strong>
                       <span lang="zh-Hant">{x.name}</span>

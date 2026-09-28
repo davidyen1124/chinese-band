@@ -21,15 +21,15 @@ No app store, no account, no subscription, no AI, no "join the waitlist." You to
 
 ## What it does
 
-- **Guzheng (古箏).** Fifteen strings across three registers over a photographed lacquered soundboard, with bone bridges (雁柱) marching diagonally toward the carved front bridge and a mother-of-pearl head panel, because a guzheng without bridges is just a very sad shelf. The green strings are the "5", like the real thing. Tap to pluck, swipe to glissando like you trained for twelve years. Multi-touch, so all ten fingers can be wrong at the same time.
-- **Percussion (打擊樂).** 堂鼓, 板, 鈸, 梆子, 鑼, 響盞, 小鼓, plus a second bank of war drums and flowerpot drums with separate heads and rims, all painted in mineral pigments (cinnabar, pine, azurite, gamboge, ink). Enough to start a Peking opera, or a noise complaint.
+- **Guzheng (古箏).** All 21 strings of a concert guzheng, C1 to C5, laid out the way it sits in front of a player: lowest string farthest away, highest nearest, the four green "5"s where they belong, bone bridges (雁柱) marching diagonally across a lacquered soundboard to the S-curved front bridge (岳山) and a mother-of-pearl head. Tap to pluck, swipe to glissando like you trained for twelve years. Multi-touch, so all ten fingers can be wrong at the same time.
+- **Percussion (打擊樂).** 堂鼓, 板, 鈸, 梆子, 鑼, 響盞, 小鼓, plus a second bank of war drums, flowerpot drums and opera drums with separate heads and rims. Each pad is painted in a mineral pigment (cinnabar, pine, azurite, gamboge, ink) with a ghost of the real instrument underneath, so you know what you're hitting. Enough to start a Peking opera, or a noise complaint.
 - **No toolbar.** Record, songs and the menu are three small buttons up top. Start a song and it becomes a capsule in the header; stop it and it's gone. Hit record and the header turns red with a timer and a Done button, and nothing else on screen moves. We tried a permanent bottom bar first. It was always there, like a coworker who wants to "circle back."
 - **The whole band on a big screen.** On a laptop the guzheng and the drums share one stage, so you can glide the strings with the mouse and hit gongs on the number keys at the same time. On a phone they're two pages; swipe the title to switch.
 - **Songs.** Three originals from the 2012 app (鴛鴦蝴蝶夢, 菊花台, 梁祝) with every note and voice preserved, plus four new studies. Play along, loop, slow them down to 50% and pretend that was the plan.
 - **Record, rename, share.** Recordings stay on your device. Export a real WAV your friends can open without installing anything, or a JSON score you can import later. It even reads legacy Chinese Band `.txt` files, in case you have a 2012 Android phone in a drawer and unresolved feelings.
 - **中文 / English.** Every screen, every dialog, every error message. The language button is in the top-right, where it has always been, in every app, since the dawn of time.
 - **Works on phones.** Portrait, landscape (the strings stand upright), Add to Home Screen, and it plays with the iPhone silent switch on, because apparently that needed its own paragraph of code.
-- **Keyboard.** `P O I U Y T R E W Q L K J H G` for strings, `1`–`8` for drums, `Esc` to leave focus mode. For the three desktop users who read READMEs.
+- **Keyboard.** Strings go low to high across `Z X`, `A`–`L` and `Q`–`P`; drums are `1`–`8`; both work at once. For the three desktop users who read READMEs.
 
 ## Things that used to be here
 
@@ -60,7 +60,7 @@ The build uses relative paths, so `dist/` also works from a subfolder, a custom 
 - **Vite + React + TypeScript**, one page, no router, no state library, no regrets.
 - **Web Audio** for sample playback, scheduled on the audio clock so a fast glissando doesn't wait for React to finish having thoughts.
 - **IndexedDB** for recordings, `localStorage` for your volume and language, and absolutely nothing else leaves your device.
-- **The layout** was picked from three concepts generated with Codex's frontend-app-builder, after an unreasonable amount of staring at guzheng, guqin, koto and opera-drum apps on the App Store and Google Play. The losers were a control rail and a scrolling jianpu strip. They took it well. The soundboard and bridges were then photographed by an image model, because the hand-drawn one looked like a toy.
+- **The layout** was picked from three concepts generated with Codex's frontend-app-builder, after an unreasonable amount of staring at guzheng, guqin, koto and opera-drum apps on the App Store and Google Play. The losers were a control rail and a scrolling jianpu strip. They took it well. The hand-drawn guzheng looked like a toy, so we fed a pile of real guzheng and opera-percussion photos (Wikimedia Commons, the Met's open access collection, Dunhuang's catalogue) to an image model and had it photograph a proper one. The strings are still drawn in code on top, traced onto the curved front bridge so they end exactly where the wood says they should.
 - **Native `<dialog>`** for every sheet and modal: the browser handles focus, Escape and the backdrop, which is more than most component libraries manage.
 - Type is **Noto Serif TC**. The palette is rice paper, pine ink, walnut and one cinnabar seal, loosely following the Palace Museum's digital collection rather than a takeout menu.
 

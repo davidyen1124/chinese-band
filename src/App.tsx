@@ -1,14 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Download, FileMusic, ListMusic, Menu, Share2, Volume2, VolumeX, X } from 'lucide-react'
 import { AudioEngine } from './lib/audio-engine'
-import { defaultSong, keyboardRow, notesForRegister, percussion, type Recording, type Song } from './lib/catalog'
+import { defaultSong, keyboardRow, percussion, zhengStrings, type Recording, type Song } from './lib/catalog'
 import { deleteRecording, download, listRecordings, parseRecording, saveRecording, StorageError } from './lib/storage'
 import { flash } from './lib/flash'
 import { I18n, initialLang, isKey, makeT, useI18n, type Lang } from './i18n'
 import { Guzheng } from './components/Guzheng'
 import { Percussion } from './components/Percussion'
 import { NowPlaying, RecordTool, StatusIsland } from './components/Transport'
-import { Segmented } from './components/Controls'
 import { Library, type Panel } from './components/Library'
 import { Overlay } from './components/Overlay'
 
@@ -40,9 +39,7 @@ export default function App() {
   const [armed, setArmed] = useState(false)
   const [loadingError, setLoadingError] = useState(false)
   const [mode, setMode] = useState<Mode>('guzheng')
-  const [register, setRegister] = useState(2)
   const [group, setGroup] = useState(0)
-  const [bNotes, setBNotes] = useState(false)
   const [panel, setPanel] = useState<Panel | null>(null)
   const [shownPanel, setShownPanel] = useState<Panel>('menu')
   const [selected, setSelected] = useState<Song>(defaultSong)
@@ -144,7 +141,6 @@ export default function App() {
         const s = JSON.parse(localStorage.getItem(SETTINGS_KEY) ?? '{}')
         if (typeof s.volume === 'number') setVolume(Math.max(0, Math.min(1, s.volume)))
         if (typeof s.accompaniment === 'number') setAccompaniment(Math.max(0, Math.min(1, s.accompaniment)))
-        if (typeof s.bNotes === 'boolean') setBNotes(s.bNotes)
       } catch {
         // Corrupt or blocked storage: keep the defaults.
       }
@@ -161,11 +157,11 @@ export default function App() {
     engine?.setAccompaniment(accompaniment)
     if (volume > 0) unmuteVolume.current = volume
     try {
-      if (loaded) localStorage.setItem(SETTINGS_KEY, JSON.stringify({ volume, accompaniment, bNotes }))
+      if (loaded) localStorage.setItem(SETTINGS_KEY, JSON.stringify({ volume, accompaniment }))
     } catch {
       // Storage may be unavailable; settings simply won't persist.
     }
-  }, [engine, volume, accompaniment, bNotes, loaded])
+  }, [engine, volume, accompaniment, loaded])
 
   useEffect(() => {
     const hidden = () => {
@@ -195,7 +191,7 @@ export default function App() {
       const index = keyboardRow.indexOf(e.key.toLowerCase())
       const note =
         index >= 0
-          ? notesForRegister(register, bNotes)[index]
+          ? zhengStrings[index]
           : percussion.filter((p) => p.group === group)[Number(e.key) - 1]?.id
       if (note) {
         e.preventDefault()
@@ -204,7 +200,7 @@ export default function App() {
     }
     window.addEventListener('keydown', key)
     return () => window.removeEventListener('keydown', key)
-  }, [armed, register, bNotes, group, panel, edit, engine])
+  }, [armed, group, panel, edit, engine])
 
   const enable = async () => {
     if (!engine) return false
@@ -474,23 +470,10 @@ export default function App() {
                   <span>{t('guzheng')}</span>
                   <small lang={lang === 'zh' ? 'en' : 'zh-Hant'}>{t('guzhengOther')}</small>
                 </h1>
-                <Segmented<number>
-                  className="register-select compact"
-                  label={t('register')}
-                  value={register}
-                  onChange={setRegister}
-                  options={(
-                    [
-                      [1, 'regLow'],
-                      [2, 'regMid'],
-                      [3, 'regHigh'],
-                    ] as const
-                  ).map(([value, key]) => ({ value, label: t(key), aria: t('regLabel', { name: t(key) }) }))}
-                />
                 <PageDots mode={mode} setMode={setMode} />
               </div>
               <div className="panel-body">
-                <Guzheng engine={engine} register={register} bNotes={bNotes} enabled={armed} />
+                <Guzheng engine={engine} enabled={armed} />
               </div>
             </section>
             <i className="stage-divider" aria-hidden="true" />
@@ -551,8 +534,6 @@ export default function App() {
           onImport={importFile}
           speed={speed}
           setSpeed={changeSpeed}
-          bNotes={bNotes}
-          setBNotes={setBNotes}
           accompaniment={accompaniment}
           setAccompaniment={setAccompaniment}
           volume={volume}
